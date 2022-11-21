@@ -2,4 +2,4 @@
 
 - `_quarto.yml`: Metadaten
 - `analyse_{br|mh|ph}.qmd`: Playground für jeden
-- `CHD_preprocessed.csv`: Framingham-Daten von [Kaggle](https://www.kaggle.com/datasets/captainozlem/framingham-chd-preprocessed-data)
+- `CHD_preprocessed.csv`: Framingham-Daten, [Quelle](https://www.kaggle.com/datasets/captainozlem/framingham-chd-preprocessed-data)
