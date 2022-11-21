@@ -1,0 +1,51 @@
+---
+title: "Analyse der Framingham Heart Study (Patrick)"
+---
+
+```{r}
+library(tidyverse)
+library(mosaic)
+```
+
+# Framingham
+
+Datenquelle: [Kaggle](https://www.kaggle.com/datasets/captainozlem/framingham-chd-preprocessed-data)
+
+```{r}
+fram <- read_csv(
+  "CHD_preprocessed.csv",
+  col_types = list(
+    male = col_logical(),
+    age = col_integer(),
+    education = col_factor(ordered = TRUE),
+    currentSmoker = col_logical(),
+    cigsPerDay = col_number(),
+    BPMeds = col_logical(),
+    prevalentStroke = col_logical(),
+    prevalentHyp = col_logical(),
+    diabetes = col_logical(),
+    totChol = col_number(),
+    sysBP = col_number(),
+    diaBP = col_number(),
+    BMI = col_number(),
+    heartRate = col_number(),
+    glucose = col_number(),
+    TenYearCHD = col_logical()
+  )
+)
+fram
+```
+## Problem hier
+
+### Beschreibung
+
+```{r}
+problems(fram)
+```
+
+Spalte 6 (`BPMeds`) sollte nur `1/0/T/F/TRUE/FALSE` enthalten, enthält aber `0.0`
+
+### Lösung
+
+- entweder beim Einlesen korrigieren
+- oder Spalte erstmal `BPMedsDirty` nennen und nachträglich reparieren
