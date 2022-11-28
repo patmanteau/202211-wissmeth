@@ -147,9 +147,8 @@ fram <- read_csv(
 
 
 ```{r}
-fram <- read_delim(
+fram <- read_csv2(
   "ext.csv",
-  delim = ";",
   col_types = list(
     RANDID = col_integer(),
     SEX = col_factor(),
@@ -201,6 +200,9 @@ problems(fram)
 
 ```{r}
 library(GGally)
-ggpairs(fram)
+fram2 <- fram |>
+  select(SEX:PREVHYP, HDLC:HYPERTEN)
+fram2
+#ggpairs(fram2)
 ```
 
