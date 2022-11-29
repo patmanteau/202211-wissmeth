@@ -1,5 +1,5 @@
 ---
-title: "Analyse der Framingham Heart Study (Patrick)"
+title: "Analyse der Framingham Heart Study"
 ---
 
 # Framingham-Daten
