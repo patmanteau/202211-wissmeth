@@ -15,6 +15,9 @@ library(mosaic)
 
 [Beschreibung des Datensatzes](https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html)
 
+Aus `riskCommunicator` exportiert, um nicht das ganze Paket laden zu müssen.
+
+Beschreibung der Attribute:
 ```
 RANDID
 
@@ -147,9 +150,8 @@ fram <- read_csv(
 
 
 ```{r}
-fram <- read_delim(
+fram <- read_csv2(
   "ext.csv",
-  delim = ";",
   col_types = list(
     RANDID = col_integer(),
     SEX = col_factor(),
@@ -194,13 +196,51 @@ fram <- read_delim(
 )
 fram
 problems(fram)
+str(fram)
+```
+
+# Hypothese 1
+
+*Ein hoher BMI führt zu erhöhtem systolischen Blutdruck*
+
+Im Modell: *Jemand mit einem hohen BMI hat einen höheren SYSBP*
+
+- `BMI`: unabhängige Variable
+- `SYSBP`: abhängige Variable
+
+## Lagemaße
+
+```{r}
+favstats(~ BMI, data=fram)
+favstats(~ SYSBP, data=fram)
 ```
 
 
-# Korrelationsanalyse
+# Hypothese 2
+
+*Diabetes führt zu Gefäßerkrankungen*
+
+Im Modell: *Jemand mit bekannter Diabetes Diagnose hat eine höhere Chance im Beobachtungszeitraum zu versterben*
+
+- `DIABETES`: unabhängige Variable
+- `DEATH`: abhängige Variable
+
+Triggerwarnung nicht vergessen, in der Präsentation darauf hinweisen, dass es sich hier um Daten aus den 1950er/1960er Jahren handelt.
+
+## Rel. Häufigkeit von Diabetikern in der Studie
 
 ```{r}
-library(GGally)
-ggpairs(fram)
+prop(~ DIABETES, data=fram)
+```
+
+
+```{r}
+reg <- lm(CVD ~ DIABETES, data=fram)
+summary(reg)
+mosaicplot(CVD ~ DIABETES, data=fram)
+count(fram$CVD)
+count(fram$DEATH)
+mosaicplot(DEATH ~ DIABETES, data=fram)
+gf_violin(GLUCOSE ~ CVD, data=fram)
 ```
 
