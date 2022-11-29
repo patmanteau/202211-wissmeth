@@ -127,22 +127,82 @@ Hypothese: *Jemand mit einem hohen BMI hat einen höheren SYSBP*
 - `BMI`: unabhängige Variable
 - `SYSBP`: abhängige Variable
 
-### Lagemaße
+### Seed
+
+```{r}
+set.seed(69420)
+```
+
+### Explorative Datenanalyse
+
+TODO: Visualisierungen
+
+#### Lagemaße
 
 ```{r}
 favstats(~ BMI, data=fram)
 favstats(~ SYSBP, data=fram)
 ```
 
+### Scatterplot BMI SYSBP
+
+### Lineare Regression BMI SYSBP
+
+```{r}
+linreg <- lm(SYSBP ~ BMI, data=fram)
+summary(linreg)
+plotModel(linreg, scales=list(x = list(log = 10)))
+plotModel(linreg)
+```
+
+$r_{2}$ ist niedrig, BMI ist alleine also nur für einen geringen Teil der systematischen Varianz aus (für einen physiologischen Meßwert aber trotzdem ne ganze Menge)
+
+### Bootstrapping
+
+Graph von Bootstrapverteilung und Konfidenzintervall berechnen
+
+Graph von Nullverteilung und Konfidenzintervall berechnen
+
+Beide vergleichen, um Fehler 1. Art auszuschließen (die überlappen nicht nur nicht, die sind komplett unterschiedlich)
+
+TODO: beide in einen Graphen
+```{r}
+bootstrap1 <- do(10000) * lm(SYSBP ~ BMI, data=resample(fram))
+summary(bootstrap1)
+gf_density(~BMI, data=bootstrap1)
+
+bootstrap2 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram))
+summary(bootstrap2)
+gf_density(~BMI, data=bootstrap2)
+
+gf_histogram(~BMI, binwidth=0.01, data=rbind(bootstrap1, bootstrap2))
+
+ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
+  geom_histogram(data = bootstrap1, fill = "green", alpha = 0.2, binwidth = 0.01) + 
+  geom_histogram(data = bootstrap2, fill = "red", alpha = 0.9, binwidth = 0.01)
+```
 
 ## Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
 
 Hypothese: *Jemand mit bekannter Diabetes Diagnose hat eine höhere Chance im Beobachtungszeitraum zu versterben*
 
-- `DIABETES`: unabhängige Variable
-- `DEATH`: abhängige Variable
+- `GLUCOSE`: unabhängige Variable
+- `CVD`: abhängige Variable
 
 Triggerwarnung nicht vergessen, in der Präsentation darauf hinweisen, dass es sich hier um Daten aus den 1950er/1960er Jahren handelt.
+
+### Reproduzierbarkeit
+
+```{r}
+set.seed(69420)
+```
+
+### Explorative Datenanalyse
+
+TODO: Visualisierungen
+```{r}
+gf_violin(log2(GLUCOSE) ~ CVD, data=fram)
+```
 
 ### Rel. Häufigkeit von Diabetikern in der Studie
 
@@ -158,6 +218,20 @@ mosaicplot(CVD ~ DIABETES, data=fram)
 count(fram$CVD)
 count(fram$DEATH)
 mosaicplot(DEATH ~ DIABETES, data=fram)
-gf_violin(GLUCOSE ~ CVD, data=fram)
+```
+### Logistische Regression
+
+```{r}
+logreg1 <- glm(CVD ~ GLUCOSE, family=binomial("logit"), data=fram)
+summary(logreg1)
+plotModel(logreg1)
+```
+
+### Bootstrapping
+
+```{r}
+#logreg2 <- do(100) * glm(CVD ~ GLUCOSE, family=binomial("logit"), data=resample(fram))
+#summary(logreg2)
+#gf_histogram(logreg2)
 ```
 
