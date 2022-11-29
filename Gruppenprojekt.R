@@ -30,70 +30,68 @@ chd <- read_csv(
   )
 )%>% mutate (BPMeds = if_else(BPMeds == 1, TRUE, FALSE))
 
-str(chd)
+# Hypothese 1
 
-gf_histogram(~age, data=chd)
+lr3 <- lm(SYSBP ~ BMI, data=chd2)
 
-gf_bar(~age|TenYearCHD, data=chd)
+set.seed(69420)
 
-lr1 <- lm(TenYearCHD~age, data=chd)
+BS1 <- do(10000)* lm(SYSBP~BMI, data=resample(chd2))
 
-summary(lr1)
+summary(BS1)
 
-plotModel(lr1)
+gf_histogram(~BMI, data=BS1)
 
-gf_boxplot(age~TenYearCHD, data=chd)
+sd(~BMI, data=BS1)
 
-gf_point(TenYearCHD~age, data=chd)
+qdata(~BMI, data=BS1, p=c(0.001, 0.999))
 
-gf_point(sysBP ~ heartRate, data=chd)
+set.seed(69420)
 
-lr2 <- lm(heartRate ~ diaBP, data=chd)
+NV1 <- do(10000)* lm(SYSBP~shuffle(BMI), data=resample(chd2))
 
-summary(lr2)
+gf_histogram(~BMI, data=NV1)
 
-plotModel(lr2)
+qdata(~BMI, data=NV1, p=c(0.001, 0.999))
 
-lr3 <- lm(sysBP ~ BMI, data=chd2) # Hyp 1
+summary(NV1)
 
 summary(lr3)
 
 plotModel(lr3)
 
-gf_boxplot(heartRate~currentSmoker, data=chd)
+cor(SYSBP~BMI, data=chd2)
 
-lr4 <- lm(diabetes ~ BMI, data=chd)
+coef(lr3)
 
-summary(lr4)
+# Hypothese 2
 
-plotModel(lr4)
+chd2$CVD <- factor(chd2$CVD, levels = c("0", "1"))
 
-gf_boxplot(diabetes~BMI, data=chd)
-
-lr5 <- lm(currentSmoker~male, data=chd)
-
-summary(lr5)
-
-plotModel(lr5)
-
-gf_bar(~BMI, data=chd)
-
-fav_stats(~BMI, data=chd)
-
-max(~BMI, data=chd)
-
-chd[chd$BMI == 56.8,]
-
-lr6 <- lm(DEATH~DIABETES, data=chd2) # Hyp 2
+lr6 <- glm(CVD~GLUCOSE, data=chd2, family=binomial("logit"))
 
 summary(lr6)
 
 plotModel(lr6)
 
-mosaicplot(DEATH~DIABETES, data=chd2)
+set.seed(69420)
 
-prop(~DEATH, data=chd2)
+BS2 <- do(10000)* glm(CVD~GLUCOSE, data=resample(chd2), family=binomial("logit"))
 
-gf_boxplot(AGE~PREVCHD, data=chd2)
+summary(BS2)
 
-count(~PREVCHD, data=chd2)
+gf_histogram(~GLUCOSE, data=BS2)
+
+set.seed(69420)
+
+NV2 <-do(10000)* glm(CVD~shuffle(GLUCOSE), data=resample(chd2), family=binomial("logit"))
+
+summary(NV2)
+
+gl_histogram(~GLUCOSE, data=NV2)
+
+prop(~abs(GLUCOSE) >= abs(coef(BS2) [2]), data=NV2)
+
+mosaicplot(CVD~DIABETES, data=chd2)
+
+prop(~CVD, data=chd2)
