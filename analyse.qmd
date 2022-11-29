@@ -56,9 +56,10 @@ Beschreibung der Attribute:
 # Libraries laden
 
 ```{r}
-#| warning: false
+#| include: false
 library(tidyverse)
-library(dplyr)
+library(ggExtra)
+library(gridExtra)
 library(mosaic)
 ```
 
@@ -125,9 +126,11 @@ str(fram)
 Hypothese: *Jemand mit einem hohen BMI hat einen höheren SYSBP*
 
 - `BMI`: unabhängige Variable
+  - verhältnisskaliert (?)
 - `SYSBP`: abhängige Variable
+  - verhältnisskaliert (?)
 
-### Seed
+### Reproduzierbarkeit
 
 ```{r}
 set.seed(69420)
@@ -135,7 +138,68 @@ set.seed(69420)
 
 ### Explorative Datenanalyse
 
+#### Verteilung der Variablen
+
+```{r}
+#| label: bmi_sysbp_dist
+#| fig-cap: Verteilung von Body Mass Index und systolischem Blutdruck
+#| warning: false
+#| echo: false
+bmi_hgram <- fram |>
+  ggplot(aes(x=BMI)) +
+  #ggtitle("Verteilung des Body Mass Index") +
+  geom_histogram(fill="#4477aa", color="#4477aa", binwidth=1, alpha=0.8) + 
+  theme_minimal()
+
+sysbp_hgram <- fram |>
+  ggplot(aes(x=SYSBP)) +
+  #ggtitle("Verteilung des systolischen Blutdrucks") +
+  geom_histogram(fill="#ee6677", color="#ee6677", binwidth=5, alpha=0.8) + 
+  theme_minimal()
+
+grid.arrange(bmi_hgram, sysbp_hgram)
+```
+
+
 TODO: Visualisierungen
+```{r}
+# schmuddelige Punktwolke ist mal so richtiger Käse...
+ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  geom_point()
+
+ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", colour="white", alpha=0.5) + 
+  geom_point(alpha=0.1) +
+  scale_fill_distiller(palette=4, direction=-1) +
+  theme_minimal()
+
+bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  geom_point(alpha=0.1) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon") +
+  scale_fill_distiller(palette="YlGnBu", direction=-1) +
+  theme_minimal() +
+  theme(
+    legend.position='none'
+  )
+
+ggMarginal(
+  bmi_sysbp_plot,
+  type="histogram",
+  xparams=list(colour="#228833", fill="#228833", alpha=0.7),
+  yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.7)
+)
+
+ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_minimal() +
+  theme(
+    legend.position='none'
+  )
+  
+```
+
 
 #### Lagemaße
 
@@ -153,6 +217,16 @@ linreg <- lm(SYSBP ~ BMI, data=fram)
 summary(linreg)
 plotModel(linreg, scales=list(x = list(log = 10)))
 plotModel(linreg)
+
+p <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  geom_point()
+
+ggMarginal(p, type="violin")
+
+ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", colour="white") + 
+  scale_fill_distiller(palette=4, direction=-1) +
+  ggMarginal(data=fram, "BMI", "SYSBP")
 ```
 
 $r_{2}$ ist niedrig, BMI ist alleine also nur für einen geringen Teil der systematischen Varianz aus (für einen physiologischen Meßwert aber trotzdem ne ganze Menge)
@@ -167,19 +241,19 @@ Beide vergleichen, um Fehler 1. Art auszuschließen (die überlappen nicht nur n
 
 TODO: beide in einen Graphen
 ```{r}
-bootstrap1 <- do(10000) * lm(SYSBP ~ BMI, data=resample(fram))
-summary(bootstrap1)
-gf_density(~BMI, data=bootstrap1)
+#bootstrap1 <- do(10000) * lm(SYSBP ~ BMI, data=resample(fram))
+#summary(bootstrap1)
+#gf_density(~BMI, data=bootstrap1)
 
-bootstrap2 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram))
-summary(bootstrap2)
-gf_density(~BMI, data=bootstrap2)
+#bootstrap2 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram))
+#summary(bootstrap2)
+#gf_density(~BMI, data=bootstrap2)
 
-gf_histogram(~BMI, binwidth=0.01, data=rbind(bootstrap1, bootstrap2))
+#gf_histogram(~BMI, binwidth=0.01, data=rbind(bootstrap1, bootstrap2))
 
-ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
-  geom_histogram(data = bootstrap1, fill = "green", alpha = 0.2, binwidth = 0.01) + 
-  geom_histogram(data = bootstrap2, fill = "red", alpha = 0.9, binwidth = 0.01)
+#ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
+#  geom_histogram(data = bootstrap1, fill = "green", alpha = 0.2, binwidth = 0.01) + 
+#  geom_histogram(data = bootstrap2, fill = "red", alpha = 0.9, binwidth = 0.01)
 ```
 
 ## Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
@@ -187,7 +261,9 @@ ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) +
 Hypothese: *Jemand mit bekannter Diabetes Diagnose hat eine höhere Chance im Beobachtungszeitraum zu versterben*
 
 - `GLUCOSE`: unabhängige Variable
+  - verhältnisskaliert
 - `CVD`: abhängige Variable
+  - binärskaliert
 
 Triggerwarnung nicht vergessen, in der Präsentation darauf hinweisen, dass es sich hier um Daten aus den 1950er/1960er Jahren handelt.
 
