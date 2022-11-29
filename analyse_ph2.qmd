@@ -111,7 +111,8 @@ fram <- read_csv2(
     TIMEDTH = col_integer(),
     TIMEHYP = col_integer()
   )
-)
+) |> mutate(SEX = forcats::fct_recode(SEX, "MALE" = "1", "FEMALE" = "2"))
+
 fram
 problems(fram)
 str(fram)
