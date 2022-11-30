@@ -175,20 +175,16 @@ sysbp_hgram <- fram |>
 grid.arrange(bmi_hgram, sysbp_hgram)
 ```
 
-Im Histogramm mit Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und 130 - sind überrepräsentiert.
+Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und 130 - sind überrepräsentiert.
 
 
 #### 
 
 ```{r}
-# schmuddelige Punktwolke ist mal so richtiger Käse...
-ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  geom_point()
-
-# ...besser ein Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...
+# Besser: Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...
 bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   geom_point(alpha=0.4, colour="#7a0177") +
-  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha=0.8) +
+  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", alpha=0.8) +
   scale_fill_distiller(palette="RdPu", direction=-1) +
   theme_minimal() +
   theme(
@@ -196,13 +192,13 @@ bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   )
 
 # ...mit Verteilung an den Rändern
-ggMarginal(
+bmi_sysbp_plot_full <- ggMarginal(
   bmi_sysbp_plot,
   type="histogram",
   xparams=list(colour="#4477aa", fill="#4477aa", alpha=0.8, binwidth=1),
   yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.8, binwidth=5)
 )
-
+bmi_sysbp_plot_full
 ```
 
 
@@ -213,28 +209,38 @@ favstats(~ BMI, data=fram)
 favstats(~ SYSBP, data=fram)
 ```
 
-### Scatterplot BMI SYSBP
-
 ### Lineare Regression BMI SYSBP
 
 ```{r}
 linreg <- lm(SYSBP ~ BMI, data=fram)
 summary(linreg)
-plotModel(linreg, scales=list(x = list(log = 10)))
+
+# plotModel macht leider auch overplotteten Käse. Da bleibt
+# sogar eine entscheidende Erkenntnis auf der Strecke, die
+# einen im Konturplot praktisch anspringt...
 plotModel(linreg)
 
-p <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  geom_point()
+# ...die Regressionsgerade verfehlt nämlich das Zentrum der
+# Punktwolke.
+# TODO: hängt das mit dem niedrigen $r^{2}$ zusammen?
+bmi_sysbp_plot +
+  geom_abline(color='#228833',
+              slope=coef(linreg)['BMI'],
+              intercept=coef(linreg)['(Intercept)'])
 
-ggMarginal(p, type="violin")
+#bmi_sysbp_plot +
+#  geom_smooth(method='lm')
 
-ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", colour="white") + 
-  scale_fill_distiller(palette=4, direction=-1) +
-  ggMarginal(data=fram, "BMI", "SYSBP")
 ```
 
-$r_{2}$ ist niedrig, BMI ist alleine also nur für einen geringen Teil der systematischen Varianz aus (für einen physiologischen Meßwert aber trotzdem ne ganze Menge)
+$p \lt 2^{-16}$ - der Zusammenhang ist signifikant, mit jedem BMI-Punkt steigt
+der systolische Blutdruck im Mittel um $\approx 1.5$
+
+Wir sehen im Graphen, dass die Regressionsgerade das "heiße" Zentrum des Streudiagramms verfehlt.
+
+$r^{2} = 0.0756$, der BMI erklärt alleine also nur einen geringen Anteil der systematischen Varianz (für einen physiologischen Meßwert aber trotzdem ne ganze Menge)
+
+
 
 ### Bootstrapping
 
@@ -256,9 +262,12 @@ TODO: beide in einen Graphen
 
 #gf_histogram(~BMI, binwidth=0.01, data=rbind(bootstrap1, bootstrap2))
 
-#ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
-#  geom_histogram(data = bootstrap1, fill = "green", alpha = 0.2, binwidth = 0.01) + 
-#  geom_histogram(data = bootstrap2, fill = "red", alpha = 0.9, binwidth = 0.01)
+
+
+ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
+  geom_histogram(data = bootstrap1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
+  geom_histogram(data = bootstrap2, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
+  theme_minimal()
 ```
 
 ## Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
