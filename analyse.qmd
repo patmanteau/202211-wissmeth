@@ -138,7 +138,9 @@ set.seed(69420)
 
 ### Explorative Datenanalyse
 
-#### Verteilung der Variablen
+#### Verteilung von BMI und systolischem Blutdruck
+
+Beides sind numerische Variablen, wir schauen uns also mal ihre Verteilung an.
 
 ```{r}
 #| label: bmi_sysbp_dist
@@ -147,57 +149,60 @@ set.seed(69420)
 #| echo: false
 bmi_hgram <- fram |>
   ggplot(aes(x=BMI)) +
-  #ggtitle("Verteilung des Body Mass Index") +
   geom_histogram(fill="#4477aa", color="#4477aa", binwidth=1, alpha=0.8) + 
   theme_minimal()
+  # TODO: 2discuss: Histogramm oder KDE?
+  # ggtitle("Verteilung des Body Mass Index") +
+  # geom_histogram(fill="#4477aa", color="#4477aa", binwidth=1, alpha=0.8) +
+  # geom_density(fill="#4477aa", color="#4477aa", alpha=0.8) +
+  
+
+sysbp_hgram_colours <- c('1'='#228833', '5'='#ee6677')
 
 sysbp_hgram <- fram |>
   ggplot(aes(x=SYSBP)) +
-  #ggtitle("Verteilung des systolischen Blutdrucks") +
-  geom_histogram(fill="#ee6677", color="#ee6677", binwidth=5, alpha=0.8) + 
+  geom_histogram(aes(colour='5', fill='5'), binwidth=5, alpha=0.8) + 
+  geom_histogram(aes(colour='1', fill='1'), binwidth=1, alpha=0.8) +
+  scale_colour_manual(values=sysbp_hgram_colours,
+                      breaks=NULL) +
+  scale_fill_manual(values=sysbp_hgram_colours,
+                    name='binwidth') +
   theme_minimal()
+  #ggtitle("Verteilung des systolischen Blutdrucks") +
+  #geom_density(fill="#ee6677", color="#ee6677", alpha=0.8) + 
+  
 
 grid.arrange(bmi_hgram, sysbp_hgram)
 ```
 
+Im Histogramm mit Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und 130 - sind überrepräsentiert.
 
-TODO: Visualisierungen
+
+#### 
+
 ```{r}
 # schmuddelige Punktwolke ist mal so richtiger Käse...
 ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   geom_point()
 
-ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", colour="white", alpha=0.5) + 
-  geom_point(alpha=0.1) +
-  scale_fill_distiller(palette=4, direction=-1) +
-  theme_minimal()
-
+# ...besser ein Konturplot (2D-Kerndichteschätzung)...
 bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  geom_point(alpha=0.1) +
-  stat_density_2d(aes(fill = ..level..), geom = "polygon") +
-  scale_fill_distiller(palette="YlGnBu", direction=-1) +
+  geom_point(alpha=0.8, colour="#7a0177") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha=0.8) +
+  scale_fill_distiller(palette="RdPu", direction=-1) +
   theme_minimal() +
   theme(
     legend.position='none'
   )
 
+# ...mit Verteilung an den Rändern
 ggMarginal(
   bmi_sysbp_plot,
   type="histogram",
-  xparams=list(colour="#228833", fill="#228833", alpha=0.7),
-  yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.7)
+  xparams=list(colour="#4477aa", fill="#4477aa", alpha=0.8, binwidth=1),
+  yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.8, binwidth=5)
 )
 
-ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  theme_minimal() +
-  theme(
-    legend.position='none'
-  )
-  
 ```
 
 
