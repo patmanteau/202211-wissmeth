@@ -185,9 +185,9 @@ Im Histogramm mit Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und
 ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   geom_point()
 
-# ...besser ein Konturplot (2D-Kerndichteschätzung)...
+# ...besser ein Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...
 bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
-  geom_point(alpha=0.8, colour="#7a0177") +
+  geom_point(alpha=0.4, colour="#7a0177") +
   stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha=0.8) +
   scale_fill_distiller(palette="RdPu", direction=-1) +
   theme_minimal() +
