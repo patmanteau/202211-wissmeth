@@ -130,12 +130,6 @@ Hypothese: *Jemand mit einem hohen BMI hat einen höheren SYSBP*
 - `SYSBP`: abhängige Variable
   - verhältnisskaliert (?)
 
-### Reproduzierbarkeit
-
-```{r}
-set.seed(69420)
-```
-
 ### Explorative Datenanalyse
 
 #### Verteilung von BMI und systolischem Blutdruck
@@ -212,21 +206,21 @@ favstats(~ SYSBP, data=fram)
 ### Lineare Regression BMI SYSBP
 
 ```{r}
-linreg <- lm(SYSBP ~ BMI, data=fram)
-summary(linreg)
+linReg <- lm(SYSBP ~ BMI, data=fram)
+summary(linReg)
 
 # plotModel macht leider auch overplotteten Käse. Da bleibt
 # sogar eine entscheidende Erkenntnis auf der Strecke, die
 # einen im Konturplot praktisch anspringt...
-plotModel(linreg)
+plotModel(linReg)
 
 # ...die Regressionsgerade verfehlt nämlich das Zentrum der
 # Punktwolke.
 # TODO: hängt das mit dem niedrigen $r^{2}$ zusammen?
 bmi_sysbp_plot +
   geom_abline(color='#228833',
-              slope=coef(linreg)['BMI'],
-              intercept=coef(linreg)['(Intercept)'])
+              slope=coef(linReg)['BMI'],
+              intercept=coef(linReg)['(Intercept)'])
 
 #bmi_sysbp_plot +
 #  geom_smooth(method='lm')
@@ -251,24 +245,46 @@ Graph von Nullverteilung und Konfidenzintervall berechnen
 Beide vergleichen, um Fehler 1. Art auszuschließen (die überlappen nicht nur nicht, die sind komplett unterschiedlich)
 
 TODO: beide in einen Graphen
+
+
 ```{r}
-#bootstrap1 <- do(10000) * lm(SYSBP ~ BMI, data=resample(fram))
-#summary(bootstrap1)
-#gf_density(~BMI, data=bootstrap1)
+# Bootstrapping
+set.seed(69420) # Reproduzierbarkeit
 
-#bootstrap2 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram))
-#summary(bootstrap2)
-#gf_density(~BMI, data=bootstrap2)
+Bootstr_1 <- do(10000)* lm(SYSBP ~ BMI, data=resample(fram))
+summary(Bootstr_1)
 
-#gf_histogram(~BMI, binwidth=0.01, data=rbind(bootstrap1, bootstrap2))
+# Standardabweichung
+sd(~ BMI, data=Bootstr_1) 
 
+# Konfidenzintervall alpha = 1 Prozent
+qdata(~ BMI, data=Bootstr_1, p=c(0.005, 0.995))  
+```
 
+```{r}
+# Nullverteilung
+set.seed(69420) # Reproduzierbarkeit
 
-ggplot(rbind(bootstrap1, bootstrap2), aes(x=BMI)) + 
-  geom_histogram(data = bootstrap1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
-  geom_histogram(data = bootstrap2, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
+Nullver_1 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram)) 
+
+gf_histogram(~ BMI, data=Nullver_1)
+
+# Konfidenzintervall alpha = 1 Prozent
+qdata(~ BMI, data=Nullver_1, p=c(0.005, 0.995)) 
+
+summary(Nullver_1)
+
+cor(SYSBP ~ BMI, data=fram) # Korrelation aus Datensatz
+
+coef(LinReg) # Koeffizient aus Linearer Regression aus Datensatz
+
+ggplot(rbind(Bootstr_1, Nullver_1), aes(x=BMI)) + 
+  geom_histogram(data = Bootstr_1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
+  geom_histogram(data = Nullver_1, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
   theme_minimal()
 ```
+
+
 
 ## Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
 
@@ -291,7 +307,26 @@ set.seed(69420)
 
 TODO: Visualisierungen
 ```{r}
-gf_violin(log2(GLUCOSE) ~ CVD, data=fram)
+# Gruppengröße
+cvd_size <- fram |>
+  group_by(CVD) |>
+  summarise(num=n())
+
+gluc_cvd_plot <- fram |>
+  left_join(cvd_size) |>
+  mutate(CVD = paste0(CVD, "\n", "n=", num)) |>
+  ggplot(aes(x=CVD, y=GLUCOSE, fill=CVD)) +
+    geom_jitter(alpha = 0.2, color="grey", fill="grey") + 
+    geom_violin(width=0.9, alpha=0.8, adjust=.5) +
+    geom_boxplot(width=0.2, color="#332288", fill="#332288", alpha=0.6, outlier.shape = NA) +
+    coord_trans(y="log10") +
+    scale_fill_brewer(type="qual") +
+    theme_minimal() +
+    theme(
+      legend.position="none"
+    )
+
+gluc_cvd_plot
 ```
 
 ### Rel. Häufigkeit von Diabetikern in der Studie
@@ -309,12 +344,42 @@ count(fram$CVD)
 count(fram$DEATH)
 mosaicplot(DEATH ~ DIABETES, data=fram)
 ```
+
 ### Logistische Regression
 
 ```{r}
-logreg1 <- glm(CVD ~ GLUCOSE, family=binomial("logit"), data=fram)
+fram <- fram |>
+  mutate(CVDNUM = if_else(CVD == TRUE, 1, 0))
+
+logreg1 <- glm(CVDNUM ~ GLUCOSE, family=binomial("logit"), data=fram)
 summary(logreg1)
 plotModel(logreg1)
+
+logRegPlot <- ggplot(fram, aes(x=GLUCOSE, y=CVDNUM, fill=CVDNUM)) +
+  geom_jitter(alpha=0.2, height=0.3) +
+  stat_smooth(method = "glm", se = FALSE, method.args = list(family = binomial), formula = CVDNUM ~ GLUCOSE) +
+  theme_minimal()
+logRegPlot
+
+withCVD <- fram |>
+  filter(CVDNUM == 1)
+withoutCVD <- fram |>
+  filter(CVDNUM == 0)
+
+
+
+logRegPlot <- ggplot(rbind(withCVD, withoutCVD), aes(x = GLUCOSE)) +
+  geom_histogram(data = withCVD, aes(y = 1-..density..), fill = "#4477aa", colour = "#4477aa", alpha = 0.4) +
+  geom_histogram(data = withoutCVD, aes(y = -1+..density..), fill = "#ee6677", colour = "#ee6677", alpha = 0.4) + 
+  coord_trans(x="log10") + 
+  theme_minimal()
+logRegPlot
+
+  
+  geom_histogram(data = Bootstr_1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
+  geom_histogram(data = Nullver_1, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
+  theme_minimal()
+geom_density()
 ```
 
 ### Bootstrapping
@@ -323,5 +388,45 @@ plotModel(logreg1)
 #logreg2 <- do(100) * glm(CVD ~ GLUCOSE, family=binomial("logit"), data=resample(fram))
 #summary(logreg2)
 #gf_histogram(logreg2)
+```
+
+### Benjamins Code
+
+```{r}
+fram <- fram |>
+  mutate(CVDNUM = if_else(CVD == TRUE, 1, 0))
+
+# Logistische Rergession
+logReg <- glm(CVDNUM ~ GLUCOSE, data=fram, family=binomial("logit")) 
+
+summary(logReg)
+
+plotModel(logReg)
+
+set.seed(69420)
+
+Bootstr_2 <- do(10000) * glm(CVD ~ GLUCOSE, data=resample(Data), family=binomial("logit"))
+
+summary(Bootstr_2)
+
+gf_histogram(~ GLUCOSE, data=Bootstr_2)
+
+set.seed(69420)
+
+Nullver_2 <-do(10000) * glm(CVD ~ shuffle(GLUCOSE), data=resample(Data), family=binomial("logit"))
+
+summary(Nullver_2)
+
+gl_histogram(~ GLUCOSE, data=Nullver_2)
+
+
+# Anteil von Koeffizeinten aus der Nullverteilung der sich mit der Range der
+# Koeffizienten aus dem Bootsrapping überschneidet oder größer ist
+prop(~ abs(GLUCOSE) >= abs(coef(Bootstr_2) [2]), data=Nullver_2) 
+
+mosaicplot(CVD ~ DIABETES, data=Data)
+
+# Wahrscheinlichkeit eine CVD zu erleiden im Verlauf der Studie
+prop(~ CVD, data=Data) 
 ```
 
