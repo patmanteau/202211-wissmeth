@@ -2,96 +2,84 @@ library(mosaic)
 library(lsr)
 library(tidyverse)
 
-path <- "C:/Users/crazy/Desktop/FOM/Wissenschaftliche Methodik/Gruppenprojekt"
-setwd(path)
+#Path einfügen
+path <- "C:/Users/crazy/Desktop/FOM/Wissenschaftliche Methodik/Gruppenprojekt" 
+setwd(path) # Set workdirectory to path
 
-# chd <- read_csv("CHD_preprocessed.csv")
-chd2 <- read_csv2("ext.csv")
 
-chd <- read_csv(
-  "CHD_preprocessed.csv",
-  col_types = list(
-    male = col_logical(),
-    age = col_integer(),
-    education = col_factor(ordered = TRUE),
-    currentSmoker = col_logical(),
-    cigsPerDay = col_number(),
-    BPMeds = col_number(),
-    prevalentStroke = col_logical(),
-    prevalentHyp = col_logical(),
-    diabetes = col_logical(),
-    totChol = col_number(),
-    sysBP = col_number(),
-    diaBP = col_number(),
-    BMI = col_number(),
-    heartRate = col_number(),
-    glucose = col_number(),
-    TenYearCHD = col_logical()
-  )
-)%>% mutate (BPMeds = if_else(BPMeds == 1, TRUE, FALSE))
+Data <- read_csv2("ext.csv") #Daten einlesen
 
-# Hypothese 1
+#Hypothese 1
 
-lr3 <- lm(SYSBP ~ BMI, data=chd2)
+LinReg <- lm(SYSBP ~ BMI, data=Data) # Lineare Regression
 
-set.seed(69420)
+summary(LinReg) 
 
-BS1 <- do(10000)* lm(SYSBP~BMI, data=resample(chd2))
+plotModel(LinReg)
 
-summary(BS1)
+set.seed(69420) # Reproduzierbarkeit
 
-gf_histogram(~BMI, data=BS1)
+Boostr_1 <- do(10000)* lm(SYSBP ~ BMI, data=resample(Data)) # Bootstrapping
 
-sd(~BMI, data=BS1)
+summary(Bootstr_1)
 
-qdata(~BMI, data=BS1, p=c(0.001, 0.999))
+gf_histogram(~ BMI, data=Bootstr_1)
 
-set.seed(69420)
+# Standardabweichung
+sd(~ BMI, data=Bootstr_1) 
 
-NV1 <- do(10000)* lm(SYSBP~shuffle(BMI), data=resample(chd2))
+# Konfidenzintervall alpha = 1 Prozent
+qdata(~ BMI, data=Bootstr_1, p=c(0.005, 0.995))  
 
-gf_histogram(~BMI, data=NV1)
+set.seed(69420) # Reproduzierbarkeit
 
-qdata(~BMI, data=NV1, p=c(0.001, 0.999))
+# Nullverteilung
+Nullver_1 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(Data)) 
 
-summary(NV1)
+gf_histogram(~ BMI, data=Nullver_1)
 
-summary(lr3)
+# Konfidenzintervall alpha = 1 Prozent
+qdata(~ BMI, data=Nullver_1, p=c(0.005, 0.995)) 
 
-plotModel(lr3)
+summary(Nullver_1)
 
-cor(SYSBP~BMI, data=chd2)
+cor( SYSBP ~ BMI, data=Data) # Korrelation aus Datensatz
 
-coef(lr3)
+coef(LinReg) # Koeffizient aus Linearer Regression aus Datensatz
 
 # Hypothese 2
 
-chd2$CVD <- factor(chd2$CVD, levels = c("0", "1"))
+Data$CVD <- factor(Data$CVD, levels = c("0", "1")) # Setting 0=FALSE 1=TRUE
 
-lr6 <- glm(CVD~GLUCOSE, data=chd2, family=binomial("logit"))
+# Logarithmische Rergession
+LogReg <- glm(CVD ~ GLUCOSE, data=Data, family=binomial("logit")) 
 
-summary(lr6)
+summary(LogReg)
 
-plotModel(lr6)
-
-set.seed(69420)
-
-BS2 <- do(10000)* glm(CVD~GLUCOSE, data=resample(chd2), family=binomial("logit"))
-
-summary(BS2)
-
-gf_histogram(~GLUCOSE, data=BS2)
+plotModel(LogReg)
 
 set.seed(69420)
 
-NV2 <-do(10000)* glm(CVD~shuffle(GLUCOSE), data=resample(chd2), family=binomial("logit"))
+Bootstr_2 <- do(10000) * glm(CVD ~ GLUCOSE, data=resample(Data), family=binomial("logit"))
 
-summary(NV2)
+summary(Bootstr_2)
 
-gl_histogram(~GLUCOSE, data=NV2)
+gf_histogram(~ GLUCOSE, data=Bootstr_2)
 
-prop(~abs(GLUCOSE) >= abs(coef(BS2) [2]), data=NV2)
+set.seed(69420)
 
-mosaicplot(CVD~DIABETES, data=chd2)
+Nullver_2 <-do(10000) * glm(CVD ~ shuffle(GLUCOSE), data=resample(Data), family=binomial("logit"))
 
-prop(~CVD, data=chd2)
+summary(Nullver_2)
+
+gl_histogram(~ GLUCOSE, data=Nullver_2)
+
+
+# Anteil von Koeffizeinten aus der Nullverteilung der sich mit der Range der
+# Koeffizienten aus dem Bootsrapping überschneidet oder größer ist
+prop(~ abs(GLUCOSE) >= abs(coef(Bootstr_2) [2]), data=Nullver_2) 
+
+mosaicplot(CVD ~ DIABETES, data=Data)
+
+# Wahrscheinlichkeit eine CVD zu erleiden im Verlauf der Studie
+prop(~ CVD, data=Data) 
