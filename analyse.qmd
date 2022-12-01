@@ -353,33 +353,22 @@ fram <- fram |>
 
 logreg1 <- glm(CVDNUM ~ GLUCOSE, family=binomial("logit"), data=fram)
 summary(logreg1)
+
+
 plotModel(logreg1)
 
-logRegPlot <- ggplot(fram, aes(x=GLUCOSE, y=CVDNUM, fill=CVDNUM)) +
-  geom_jitter(alpha=0.2, height=0.3) +
-  stat_smooth(method = "glm", se = FALSE, method.args = list(family = binomial), formula = CVDNUM ~ GLUCOSE) +
+
+log_smooth <- function(...) {
+  geom_smooth(method = "glm", se = FALSE, color="#ee7733", method.args = list(family = "binomial"), ...)
+}
+
+logRegPlot <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM, colour=CVDNUM)) +
+  geom_jitter(alpha=0.02, height=0.3) +
+  stat_bin2d(bins = 60) + 
+  log_smooth(formula = y ~ x) +  
   theme_minimal()
 logRegPlot
 
-withCVD <- fram |>
-  filter(CVDNUM == 1)
-withoutCVD <- fram |>
-  filter(CVDNUM == 0)
-
-
-
-logRegPlot <- ggplot(rbind(withCVD, withoutCVD), aes(x = GLUCOSE)) +
-  geom_histogram(data = withCVD, aes(y = 1-..density..), fill = "#4477aa", colour = "#4477aa", alpha = 0.4) +
-  geom_histogram(data = withoutCVD, aes(y = -1+..density..), fill = "#ee6677", colour = "#ee6677", alpha = 0.4) + 
-  coord_trans(x="log10") + 
-  theme_minimal()
-logRegPlot
-
-  
-  geom_histogram(data = Bootstr_1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
-  geom_histogram(data = Nullver_1, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
-  theme_minimal()
-geom_density()
 ```
 
 ### Bootstrapping
