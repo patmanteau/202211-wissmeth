@@ -219,6 +219,7 @@ plotModel(linReg)
 # TODO: hängt das mit dem niedrigen $r^{2}$ zusammen?
 bmi_sysbp_plot +
   geom_abline(color='#228833',
+              size = 1,
               slope=coef(linReg)['BMI'],
               intercept=coef(linReg)['(Intercept)'])
 
@@ -325,8 +326,15 @@ gluc_cvd_plot <- fram |>
     theme(
       legend.position="none"
     )
-
 gluc_cvd_plot
+
+
+# mit ECDF sieht man den kleinen Unterschied etwas besser
+fram |> ggplot(aes(x=GLUCOSE, color=CVD)) +
+  stat_ecdf(geom = "step", size = 1, alpha = 0.8) +
+  theme_minimal()
+
+
 ```
 
 ### Rel. Häufigkeit von Diabetikern in der Studie
@@ -362,11 +370,15 @@ log_smooth <- function(...) {
   geom_smooth(method = "glm", se = FALSE, color="#ee7733", method.args = list(family = "binomial"), ...)
 }
 
-logRegPlot <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM, colour=CVDNUM)) +
+logRegPlot <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM)) +
   geom_jitter(alpha=0.02, height=0.3) +
-  stat_bin2d(bins = 60) + 
-  log_smooth(formula = y ~ x) +  
-  theme_minimal()
+  stat_bin2d(binwidth = c(1, 0.04), aes(colour=..count..)) + 
+  log_smooth(formula = y ~ x) +
+  theme_minimal() +
+  theme(
+    legend.position = "none"
+  )
+  
 logRegPlot
 
 ```
