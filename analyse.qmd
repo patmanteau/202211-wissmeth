@@ -1,74 +1,110 @@
 ---
 title: "Analyse der Framingham Heart Study"
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 # Framingham-Daten
 
-[Quelle](https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html)
+Wir haben die Daten aus dem R-Paket
+[riskCommunicator](https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html)
+exportiert.
 
-Aus `riskCommunicator` exportiert, um nicht das ganze Paket laden zu müssen.
+Der Datensatz enthält folgende Attribute:
 
-Beschreibung der Attribute:
+| Name     | Description                                                                                                                                                                                                                                                                                             |
+|--------------------|----------------------------------------------------|
+| RANDID   | Unique identification number for each participant. Values range from 2448-999312.                                                                                                                                                                                                                       |
+| SEX      | Participant sex. 1 = Male (n = 5022), 2 = Female (n = 6605).                                                                                                                                                                                                                                            |
+| TOTCHOL  | Serum Total Cholesterol (mg/dL). Values range from 107-696.                                                                                                                                                                                                                                             |
+| AGE      | Age at exam (years). Values range from 32-81.                                                                                                                                                                                                                                                           |
+| SYSBP    | Systolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 83.5-295.                                                                                                                                                                                                    |
+| DIABP    | Diastolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 30-150.                                                                                                                                                                                                     |
+| CURSMOKE | Current cigarette smoking at exam. 0 = Not current smoker (n = 6598), 1 = Current smoker (n = 5029).                                                                                                                                                                                                    |
+| CIGPDAY  | Number of cigarettes smoked each day. 0 = Not current smoker. Values range from 0-90 cigarettes per day.                                                                                                                                                                                                |
+| BMI      | Body Mass Index, weight in kilograms/height meters squared. Values range from 14.43-56.8.                                                                                                                                                                                                               |
+| DIABETES | Diabetic according to criteria of first exam treated or first exam with casual glucose of 200 mg/dL or more. 0 = Not a diabetic (n = 11097), 1 = Diabetic (n = 530)                                                                                                                                     |
+| BPMEDS   | Use of Anti-hypertensive medication at exam. 0 = Not currently used (n = 10090), 1 = Current use (n = 944).                                                                                                                                                                                             |
+| HEARTRTE | Heart rate (Ventricular rate) in beats/min. Values range from 37-220.                                                                                                                                                                                                                                   |
+| GLUCOSE  | Casual serum glucose (mg/dL). Values range from 39-478.                                                                                                                                                                                                                                                 |
+| EDUC     | Some high school (1), high school/GED (2), some college/vocational school (3), college (4).                                                                                                                                                                                                             |
+| PREVCHD  | Prevalent Coronary Heart Disease defined as pre-existing Angina Pectoris, Myocardial Infarction (hospitalized, silent or unrecognized), or Coronary Insufficiency (unstable angina). 0 = Free of disease (n = 10785), 1 = Prevalent disease (n = 842).                                                  |
+| PREVAP   | Prevalent Angina Pectoris at exam. 0 = Free of disease (n = 11000), 1 = Prevalent disease (n = 627).                                                                                                                                                                                                    |
+| PREVMI   | Prevalent Myocardial Infarction. 0 = Free of disease (n = 11253), 1 = Prevalent disease (n = 374).                                                                                                                                                                                                      |
+| PREVSTRK | Prevalent Stroke. 0 = Free of disease (n = 11475), 1 = Prevalent disease (n = 152).                                                                                                                                                                                                                     |
+| PREVHYP  | Prevalent Hypertensive. Subject was defined as hypertensive if treated or if second exam at which mean systolic was \>=140 mmHg or mean Diastolic \>=90 mmHg. 0 = Free of disease (n = 6283), 1 = Prevalent disease (n = 5344).                                                                         |
+| TIME     | Number of days since baseline exam. Values range from 0-4854                                                                                                                                                                                                                                            |
+| PERIOD   | Examination Cycle. 1 = Period 1 (n = 4434), 2 = Period 2 (n = 3930), 3 = Period 3 (n = 3263)                                                                                                                                                                                                            |
+| HDLC     | High Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 10-189.                                                                                                                                                                                                    |
+| LDLC     | Low Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 20-565.                                                                                                                                                                                                     |
+| DEATH    | Death from any cause. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                                                                                                                                                 |
+| ANGINA   | Angina Pectoris. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                                                                                                                                                      |
+| HOSPMI   | Hospitalized Myocardial Infarction. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                                                                                                                                   |
+| MI_FCHD  | Hospitalized Myocardial Infarction or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                                                                                                   |
+| ANYCHD   | Angina Pectoris, Myocardial infarction (Hospitalized and silent or unrecognized), Coronary Insufficiency (Unstable Angina), or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                          |
+| STROKE   | Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                                |
+| CVD      | Myocardial infarction (Hospitalized and silent or unrecognized), Fatal Coronary Heart Disease, Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup. |
+| HYPERTEN | Hypertensive. Defined as the first exam treated for high blood pressure or second exam in which either Systolic is 6 140 mmHg or Diastolic 6 90mmHg. 0 = Did not occur during followup, 1 = Did occur during followup.                                                                                  |
+| TIMEAP   | Number of days from Baseline exam to first Angina during the followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                              |
+| TIMEMI   | Number of days from Baseline exam to first HOSPMI event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                            |
+| TIMEMIFC | Number of days from Baseline exam to first MI_FCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                           |
+| TIMECHD  | Number of days from Baseline exam to first ANYCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                            |
+| TIMESTRK | Number of days from Baseline exam to first STROKE event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                            |
+| TIMECVD  | Number of days from Baseline exam to first CVD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                               |
+| TIMEDTH  | Number of days from Baseline exam to death if occurring during followup or Number of days from Baseline to censor date. Censor date may be end of followup, or last known contact date if subject is lost to followup.                                                                                  |
+| TIMEHYP  | Number of days from Baseline exam to first HYPERTEN event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.                                                                          |
 
-|Name|Description|
-|----|-----------|
-|RANDID|Unique identification number for each participant. Values range from 2448-999312.|
-|SEX|Participant sex. 1 = Male (n = 5022), 2 = Female (n = 6605).|
-|TOTCHOL|Serum Total Cholesterol (mg/dL). Values range from 107-696.|
-|AGE|Age at exam (years). Values range from 32-81.|
-|SYSBP|Systolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 83.5-295.|
-|DIABP|Diastolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 30-150.|
-|CURSMOKE|Current cigarette smoking at exam. 0 = Not current smoker (n = 6598), 1 = Current smoker (n = 5029).|
-|CIGPDAY|Number of cigarettes smoked each day. 0 = Not current smoker. Values range from 0-90 cigarettes per day.|
-|BMI|Body Mass Index, weight in kilograms/height meters squared. Values range from 14.43-56.8.|
-|DIABETES|Diabetic according to criteria of first exam treated or first exam with casual glucose of 200 mg/dL or more. 0 = Not a diabetic (n = 11097), 1 = Diabetic (n = 530)|
-|BPMEDS|Use of Anti-hypertensive medication at exam. 0 = Not currently used (n = 10090), 1 = Current use (n = 944).|
-|HEARTRTE|Heart rate (Ventricular rate) in beats/min. Values range from 37-220.|
-|GLUCOSE|Casual serum glucose (mg/dL). Values range from 39-478.|
-|EDUC|Some high school (1), high school/GED (2), some college/vocational school (3), college (4).|
-|PREVCHD|Prevalent Coronary Heart Disease defined as pre-existing Angina Pectoris, Myocardial Infarction (hospitalized, silent or unrecognized), or Coronary Insufficiency (unstable angina). 0 = Free of disease (n = 10785), 1 = Prevalent disease (n = 842).|
-|PREVAP|Prevalent Angina Pectoris at exam. 0 = Free of disease (n = 11000), 1 = Prevalent disease (n = 627).|
-|PREVMI|Prevalent Myocardial Infarction. 0 = Free of disease (n = 11253), 1 = Prevalent disease (n = 374).|
-|PREVSTRK|Prevalent Stroke. 0 = Free of disease (n = 11475), 1 = Prevalent disease (n = 152).|
-|PREVHYP|Prevalent Hypertensive. Subject was defined as hypertensive if treated or if second exam at which mean systolic was >=140 mmHg or mean Diastolic >=90 mmHg. 0 = Free of disease (n = 6283), 1 = Prevalent disease (n = 5344).|
-|TIME|Number of days since baseline exam. Values range from 0-4854|
-|PERIOD|Examination Cycle. 1 = Period 1 (n = 4434), 2 = Period 2 (n = 3930), 3 = Period 3 (n = 3263)|
-|HDLC|High Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 10-189.|
-|LDLC|Low Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 20-565.|
-|DEATH|Death from any cause. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|ANGINA|Angina Pectoris. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|HOSPMI|Hospitalized Myocardial Infarction. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|MI_FCHD|Hospitalized Myocardial Infarction or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|ANYCHD|Angina Pectoris, Myocardial infarction (Hospitalized and silent or unrecognized), Coronary Insufficiency (Unstable Angina), or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|STROKE|Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|CVD|Myocardial infarction (Hospitalized and silent or unrecognized), Fatal Coronary Heart Disease, Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|HYPERTEN|Hypertensive. Defined as the first exam treated for high blood pressure or second exam in which either Systolic is 6 140 mmHg or Diastolic 6 90mmHg. 0 = Did not occur during followup, 1 = Did occur during followup.|
-|TIMEAP|Number of days from Baseline exam to first Angina during the followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMEMI|Number of days from Baseline exam to first HOSPMI event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMEMIFC|Number of days from Baseline exam to first MI_FCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMECHD|Number of days from Baseline exam to first ANYCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMESTRK|Number of days from Baseline exam to first STROKE event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMECVD|Number of days from Baseline exam to first CVD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
-|TIMEDTH|Number of days from Baseline exam to death if occurring during followup or Number of days from Baseline to censor date. Censor date may be end of followup, or last known contact date if subject is lost to followup.|
-|TIMEHYP|Number of days from Baseline exam to first HYPERTEN event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.|
+# Vorbereitung der R-Umgebung
 
-
-# Libraries laden
+Wir laden die für unsere Untersuchung erforderlichen Pakete:
 
 ```{r}
-#| include: false
+#| echo: false
+#| warning: false
 library(tidyverse)
 library(ggExtra)
-library(gridExtra)
+library(patchwork)
 library(mosaic)
+library(glue)
 ```
 
-# Daten laden
-
-Daten liegen in `ext.csv`. Spaltentypen explizit definieren, sonst sind's alles Strings (=chr).
-
+Zusätzlich definieren wir Helferfunktionen, um das Exportieren unserer
+Plots für die Präsentation zu erleichtern.
 
 ```{r}
+do_save <- function(name, plot, widthFactor, heightFactor, ...) {
+  fname <- glue("{name}_{widthFactor}x{heightFactor}.svg")
+  width <- 7 * widthFactor
+  height <- 7 * heightFactor
+    ggsave(
+      fname,
+      plot = plot,
+      path = "plots",
+      width = width,
+      height = height,
+      bg = "transparent",
+      ...
+    )
+}
+
+hhr_save <- function(name, plot, ...) {
+  heightFactor = 1
+  for (widthFactor in c(1, 2)) {
+    do_save(name, plot, widthFactor, heightFactor)
+  }
+}
+```
+
+# Daten laden und vorbereiten
+
+Die Daten liegen in `ext.csv`. Wir definieren die Spaltentypen explizit,
+sonst interpretiert R alles als Strings. Anschließend benennen wir die
+Level des Attributs SEX um:
+
+```{r}
+#| echo: false
+#| warning: false
 fram <- read_csv2(
   "ext.csv",
   col_types = list(
@@ -113,11 +149,19 @@ fram <- read_csv2(
     TIMEHYP = col_integer()
   )
 ) |> mutate(SEX = forcats::fct_recode(SEX, "MALE" = "1", "FEMALE" = "2"))
+```
 
-fram
+Wir untersuchen, ob das Laden der Daten problemfrei funktioniert hat und
+werfen einen Blick auf Struktur und Inhalt des Datensatzes:
+
+```{r}
 problems(fram)
 str(fram)
+fram
 ```
+
+Nachdem die Daten nun in `fram` vorliegen, beginnen wir mit der
+Untersuchung.
 
 # Forschungsfragen
 
@@ -125,16 +169,17 @@ str(fram)
 
 Hypothese: *Jemand mit einem hohen BMI hat einen höheren SYSBP*
 
-- `BMI`: unabhängige Variable
-  - verhältnisskaliert (?)
-- `SYSBP`: abhängige Variable
-  - verhältnisskaliert (?)
+-   `BMI`: unabhängige Variable
+    -   verhältnisskaliert
+-   `SYSBP`: abhängige Variable
+    -   verhältnisskaliert
 
 ### Explorative Datenanalyse
 
 #### Verteilung von BMI und systolischem Blutdruck
 
-Beides sind numerische Variablen, wir schauen uns also mal ihre Verteilung an.
+Beides sind numerische Variablen, wir schauen uns also ihre Verteilung
+an.
 
 ```{r}
 #| label: bmi_sysbp_dist
@@ -166,17 +211,19 @@ sysbp_hgram <- fram |>
   #geom_density(fill="#ee6677", color="#ee6677", alpha=0.8) + 
   
 
-grid.arrange(bmi_hgram, sysbp_hgram)
+bmi_sysbp_dist <- bmi_hgram / sysbp_hgram
+hhr_save("hyp1_bmi_sysbp_dist", bmi_sysbp_dist)
+bmi_sysbp_dist
 ```
 
-Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und 130 - sind überrepräsentiert.
+Auffällig: "Runde" Blutdruckwerte - insbesondere 110, 120 und 130 - sind
+überrepräsentiert.
 
-
-#### 
+#### Zusammenhang zwischen BMI und systolischem Blutdruck
 
 ```{r}
-# Besser: Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...
-bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+# Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...
+bmi_sysbp_scatter_contour <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   geom_point(alpha=0.4, colour="#7a0177") +
   stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", alpha=0.8) +
   scale_fill_distiller(palette="RdPu", direction=-1) +
@@ -186,20 +233,48 @@ bmi_sysbp_plot <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
   )
 
 # ...mit Verteilung an den Rändern
-bmi_sysbp_plot_full <- ggMarginal(
-  bmi_sysbp_plot,
+bmi_sysbp_scatter_contour_marg <- ggMarginal(
+  bmi_sysbp_scatter_contour,
   type="histogram",
   xparams=list(colour="#4477aa", fill="#4477aa", alpha=0.8, binwidth=1),
   yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.8, binwidth=5)
 )
-bmi_sysbp_plot_full
-```
 
+hhr_save("hyp1_bmi_sysbp_scatter_contour_marg", bmi_sysbp_scatter_contour_marg)
+bmi_sysbp_scatter_contour_marg
+
+
+# ...oder kleine Punkte
+bmi_sysbp_scatter <- ggplot(fram, aes(x=BMI, y=SYSBP) ) +
+  geom_point(colour="#7a0177", shape=".") +
+  theme_minimal() +
+  theme(
+    legend.position='none'
+  )
+
+# ...mit Verteilung an den Rändern
+bmi_sysbp_scatter_marg <- ggMarginal(
+  bmi_sysbp_scatter,
+  type="histogram",
+  xparams=list(colour="#4477aa", fill="#4477aa", alpha=0.8, binwidth=1),
+  yparams=list(colour="#ee6677", fill="#ee6677", alpha=0.8, binwidth=5)
+)
+
+hhr_save("hyp1_bmi_sysbp_scatter_marg", bmi_sysbp_scatter_marg)
+bmi_sysbp_scatter_marg
+```
 
 #### Lagemaße
 
+Lagemaße BMI:
+
 ```{r}
 favstats(~ BMI, data=fram)
+```
+
+Lagemaße SYSBP:
+
+```{r}
 favstats(~ SYSBP, data=fram)
 ```
 
@@ -210,112 +285,127 @@ linReg <- lm(SYSBP ~ BMI, data=fram)
 summary(linReg)
 
 # plotModel macht leider auch overplotteten Käse. Da bleibt
-# sogar eine entscheidende Erkenntnis auf der Strecke, die
+# sogar eine Erkenntnis auf der Strecke, die
 # einen im Konturplot praktisch anspringt...
-plotModel(linReg)
+# plotModel(linReg)
 
-# ...die Regressionsgerade verfehlt nämlich das Zentrum der
+# ...die Regressionsgerade verfehlt das Zentrum der
 # Punktwolke.
 # TODO: hängt das mit dem niedrigen $r^{2}$ zusammen?
-bmi_sysbp_plot +
+bmi_sysbp_scatter_regr <- bmi_sysbp_scatter +
   geom_abline(color='#228833',
               size = 1,
               slope=coef(linReg)['BMI'],
               intercept=coef(linReg)['(Intercept)'])
 
-#bmi_sysbp_plot +
-#  geom_smooth(method='lm')
+hhr_save("hyp1_bmi_sysbp_scatter_regr", bmi_sysbp_scatter_regr)
+bmi_sysbp_scatter_regr
 
+#bmi_sysbp_dist +
+#  geom_smooth(method='lm')
 ```
 
-$p \lt 2^{-16}$ - der Zusammenhang ist signifikant, mit jedem BMI-Punkt steigt
-der systolische Blutdruck im Mittel um $\approx 1.5$
+$p \lt 2^{-16}$ - der Zusammenhang ist signifikant, mit jedem BMI-Punkt
+steigt der systolische Blutdruck im Mittel um $\approx 1.5$
 
-Wir sehen im Graphen, dass die Regressionsgerade das "heiße" Zentrum des Streudiagramms verfehlt.
+Wir sehen im Graphen, dass die Regressionsgerade das "heiße" Zentrum des
+Streudiagramms verfehlt.
 
-$r^{2} = 0.0756$, der BMI erklärt alleine also nur einen geringen Anteil der systematischen Varianz (für einen physiologischen Meßwert aber trotzdem ne ganze Menge)
+$r^{2} = 0.0756$, der BMI erklärt alleine also nur einen geringen Anteil
+der systematischen Varianz (für einen physiologischen Meßwert aber
+trotzdem ne ganze Menge)
 
-
+TODO: Hier vielleicht noch Cohens d?
 
 ### Bootstrapping
 
-Graph von Bootstrapverteilung und Konfidenzintervall berechnen
+1.  Graph von Bootstrapverteilung und Konfidenzintervall berechnen
+2.  Graph von Nullverteilung und Konfidenzintervall berechnen
+3.  Beide vergleichen, um Fehler 1. Art auszuschließen (die überlappen
+    nicht nur nicht, die sind komplett unterschiedlich)
 
-Graph von Nullverteilung und Konfidenzintervall berechnen
-
-Beide vergleichen, um Fehler 1. Art auszuschließen (die überlappen nicht nur nicht, die sind komplett unterschiedlich)
-
-TODO: beide in einen Graphen
-
+Bootstrapverteilung berechnen und ausgeben:
 
 ```{r}
-# Bootstrapping
 set.seed(69420) # Reproduzierbarkeit
-
 Bootstr_1 <- do(10000)* lm(SYSBP ~ BMI, data=resample(fram))
 summary(Bootstr_1)
+```
 
-# Standardabweichung
-sd(~ BMI, data=Bootstr_1) 
+Standardabweichung der Bootstrapverteilung ermitteln:
 
-# Konfidenzintervall alpha = 1 Prozent
+```{r}
+sd(~ BMI, data=Bootstr_1)
+```
+
+Konfidenzintervall ($\alpha = 1\%$) der Bootstrapverteilung ermitteln:
+
+```{r}
 qdata(~ BMI, data=Bootstr_1, p=c(0.005, 0.995))  
 ```
+
+Nullverteilung berechnen:
 
 ```{r}
 # Nullverteilung
 set.seed(69420) # Reproduzierbarkeit
-
 Nullver_1 <- do(10000) * lm(SYSBP ~ shuffle(BMI), data=resample(fram)) 
-
-gf_histogram(~ BMI, data=Nullver_1)
-
-# Konfidenzintervall alpha = 1 Prozent
-qdata(~ BMI, data=Nullver_1, p=c(0.005, 0.995)) 
-
 summary(Nullver_1)
-
-cor(SYSBP ~ BMI, data=fram) # Korrelation aus Datensatz
-
-coef(LinReg) # Koeffizient aus Linearer Regression aus Datensatz
-
-ggplot(rbind(Bootstr_1, Nullver_1), aes(x=BMI)) + 
-  geom_histogram(data = Bootstr_1, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.01) + 
-  geom_histogram(data = Nullver_1, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.01) +
-  theme_minimal()
 ```
 
+Standardabweichung der Nullverteilung ermitteln:
 
+```{r}
+sd(~ BMI, data=Nullver_1)
+```
+
+Konfidenzintervall ($\alpha = 1\%$) der Nullverteilung ermitteln:
+
+```{r}
+qdata(~ BMI, data=Nullver_1, p=c(0.005, 0.995))  
+```
+
+Visualisierung der Verteilungen:
+
+```{r}
+cor(SYSBP ~ BMI, data=fram) # Korrelation aus Datensatz
+coef(linReg) # Koeffizient aus Linearer Regression aus Datensatz
+
+Bootstr_1$Verteilung <- "Bootstrap"
+Nullver_1$Verteilung <- "Null"
+hyp1_bootstrap_null_hist <- ggplot(rbind(Nullver_1, Bootstr_1)) + 
+  aes(x = BMI, fill = Verteilung) +
+  geom_histogram(binwidth = 0.01, alpha = 0.8) + 
+  geom_histogram(binwidth = 0.01, alpha = 0.8) +
+  theme_minimal()
+
+
+hhr_save("hyp1_bootstrap_null_hist", hyp1_bootstrap_null_hist)
+hyp1_bootstrap_null_hist
+```
 
 ## Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
 
-Hypothese: *Jemand mit bekannter Diabetes Diagnose hat eine höhere Chance im Beobachtungszeitraum zu versterben*
+Hypothese: *Jemand mit bekannter Diabetes Diagnose (GLUCOSE \> 200) hat
+eine höhere Chance, im Beobachtungszeitraum eine schwere Gefäßerkrankung
+zu erleiden*
 
-- `GLUCOSE`: unabhängige Variable
-  - verhältnisskaliert
-- `CVD`: abhängige Variable
-  - binärskaliert
-
-Triggerwarnung nicht vergessen, in der Präsentation darauf hinweisen, dass es sich hier um Daten aus den 1950er/1960er Jahren handelt.
-
-### Reproduzierbarkeit
-
-```{r}
-set.seed(69420)
-```
+-   `GLUCOSE`: unabhängige Variable
+    -   verhältnisskaliert
+-   `CVD`: abhängige Variable
+    -   binärskaliert
 
 ### Explorative Datenanalyse
 
-TODO: Visualisierungen
 ```{r}
 # Gruppengröße
 cvd_size <- fram |>
   group_by(CVD) |>
   summarise(num=n())
 
-gluc_cvd_plot <- fram |>
+gluc_cvd_dist <- fram |>
   left_join(cvd_size) |>
-  mutate(CVD = paste0(CVD, "\n", "n=", num)) |>
+  mutate(CVD = glue("{CVD}\n(n={num})")) |>
   ggplot(aes(x=CVD, y=GLUCOSE, fill=CVD)) +
     geom_jitter(alpha = 0.2, color="grey", fill="grey") + 
     geom_violin(width=0.9, alpha=0.8, adjust=.5) +
@@ -326,36 +416,30 @@ gluc_cvd_plot <- fram |>
     theme(
       legend.position="none"
     )
-gluc_cvd_plot
 
+hhr_save("hyp2_gluc_cvd_dist", gluc_cvd_dist)
+gluc_cvd_dist
 
 # mit ECDF sieht man den kleinen Unterschied etwas besser
-fram |> ggplot(aes(x=GLUCOSE, color=CVD)) +
+gluc_cvd_edcf <- fram |> ggplot(aes(x=GLUCOSE, color=CVD)) +
   stat_ecdf(geom = "step", size = 1, alpha = 0.8) +
   theme_minimal()
 
 
+hhr_save("hyp2_gluc_cvd_edcf", gluc_cvd_edcf)
+gluc_cvd_edcf
 ```
 
 ### Rel. Häufigkeit von Diabetikern in der Studie
 
 ```{r}
-prop(~ DIABETES, data=fram)
-```
-
-
-```{r}
-reg <- lm(CVD ~ DIABETES, data=fram)
-summary(reg)
-mosaicplot(CVD ~ DIABETES, data=fram)
-count(fram$CVD)
-count(fram$DEATH)
-mosaicplot(DEATH ~ DIABETES, data=fram)
+prop(~ GLUCOSE > 126, data=fram)
 ```
 
 ### Logistische Regression
 
 ```{r}
+# Logistische Regression benötigt hier einen numerischen Wert
 fram <- fram |>
   mutate(CVDNUM = if_else(CVD == TRUE, 1, 0))
 
@@ -370,7 +454,7 @@ log_smooth <- function(...) {
   geom_smooth(method = "glm", se = FALSE, color="#ee7733", method.args = list(family = "binomial"), ...)
 }
 
-logRegPlot <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM)) +
+gluc_cvdnum_logreg <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM)) +
   geom_jitter(alpha=0.02, height=0.3) +
   stat_bin2d(binwidth = c(1, 0.04), aes(colour=..count..)) + 
   log_smooth(formula = y ~ x) +
@@ -379,55 +463,142 @@ logRegPlot <- fram |> ggplot(aes(x=GLUCOSE, y=CVDNUM)) +
     legend.position = "none"
   )
   
-logRegPlot
+
+hhr_save("hyp2_gluc_cvdnum_logreg", gluc_cvdnum_logreg)
+gluc_cvdnum_logreg
+
+#library(lsr)
+#cohensD(GLUCOSE ~ CVD, data = fram)
 
 ```
 
 ### Bootstrapping
 
+Bootstrapverteilung berechnen und ausgeben:
+
 ```{r}
-#logreg2 <- do(100) * glm(CVD ~ GLUCOSE, family=binomial("logit"), data=resample(fram))
-#summary(logreg2)
-#gf_histogram(logreg2)
+set.seed(69420) # Reproduzierbarkeit
+Bootstr_2 <- do(10000) * glm(CVD ~ GLUCOSE, family=binomial("logit"), data=resample(fram))
+summary(Bootstr_2)
 ```
+
+Standardabweichung der Bootstrapverteilung ermitteln:
+
+```{r}
+sd(~ GLUCOSE, data=Bootstr_2)
+```
+
+
+Konfidenzintervall ($\alpha = 1\%$) der Bootstrapverteilung ermitteln:
+
+```{r}
+qdata(~ GLUCOSE, data=Bootstr_2, p=c(0.005, 0.995))  
+```
+
+Nullverteilung berechnen und ausgeben:
+
+```{r}
+set.seed(69420)
+Nullver_2 <-do(10000) * glm(CVD ~ shuffle(GLUCOSE), data=resample(fram), family=binomial("logit"))
+summary(Nullver_2)
+
+#coef(Bootstr_2)
+
+# Anteil von Koeffizeinten aus der Nullverteilung der sich mit der Range der
+# Koeffizienten aus dem Bootsrapping überschneidet oder größer ist
+#prop(~ abs(GLUCOSE) >= abs(coef(Bootstr_2) [2]), data=Nullver_2) 
+```
+
+
+Standardabweichung der Nullverteilung ermitteln:
+
+```{r}
+sd(~ GLUCOSE, data=Nullver_2)
+```
+
+
+Konfidenzintervall ($\alpha = 1\%$) der Nullverteilung ermitteln:
+
+```{r}
+qdata(~ GLUCOSE, data=Nullver_2, p=c(0.005, 0.995))  
+```
+
+
+
+
+Wahrscheinlichkeit eine CVD zu erleiden im Verlauf der Studie:
+
+```{r}
+prop(~ CVD, data=fram) 
+```
+
+Visualisierung der Verteilungen:
+
+```{r}
+hyp2_bootstrap_null_hist <- ggplot(rbind(Bootstr_2, Nullver_2), aes(x=GLUCOSE)) + 
+  geom_histogram(data = Bootstr_2, fill = "#4477aa", colour = "#4477aa", alpha = 0.8, binwidth = 0.0005) + 
+  geom_histogram(data = Nullver_2, fill = "#ee6677", colour = "#ee6677", alpha = 0.8, binwidth = 0.0005) +
+  theme_minimal()
+
+Bootstr_2$Verteilung <- "Bootstrap"
+Nullver_2$Verteilung <- "Null"
+hyp2_bootstrap_null_hist <- ggplot(rbind(Bootstr_2, Nullver_2)) + 
+  aes(x = GLUCOSE, fill = Verteilung) +
+  geom_histogram(binwidth = 0.0004, alpha = 0.8) + 
+  geom_histogram(binwidth = 0.0004, alpha = 0.8) +
+  theme_minimal()
+
+
+hhr_save("hyp2_bootstrap_null_hist", hyp2_bootstrap_null_hist)
+hyp2_bootstrap_null_hist
+```
+
 
 ### Benjamins Code
 
 ```{r}
-fram <- fram |>
-  mutate(CVDNUM = if_else(CVD == TRUE, 1, 0))
-
-# Logistische Rergession
-logReg <- glm(CVDNUM ~ GLUCOSE, data=fram, family=binomial("logit")) 
-
-summary(logReg)
-
-plotModel(logReg)
-
-set.seed(69420)
-
-Bootstr_2 <- do(10000) * glm(CVD ~ GLUCOSE, data=resample(Data), family=binomial("logit"))
-
-summary(Bootstr_2)
-
-gf_histogram(~ GLUCOSE, data=Bootstr_2)
-
-set.seed(69420)
-
-Nullver_2 <-do(10000) * glm(CVD ~ shuffle(GLUCOSE), data=resample(Data), family=binomial("logit"))
-
-summary(Nullver_2)
-
-gl_histogram(~ GLUCOSE, data=Nullver_2)
-
-
-# Anteil von Koeffizeinten aus der Nullverteilung der sich mit der Range der
-# Koeffizienten aus dem Bootsrapping überschneidet oder größer ist
-prop(~ abs(GLUCOSE) >= abs(coef(Bootstr_2) [2]), data=Nullver_2) 
-
-mosaicplot(CVD ~ DIABETES, data=Data)
-
-# Wahrscheinlichkeit eine CVD zu erleiden im Verlauf der Studie
-prop(~ CVD, data=Data) 
+# fram <- fram |>
+#   mutate(CVDNUM = if_else(CVD == TRUE, 1, 0))
+# 
+# # Logistische Rergession
+# logReg <- glm(CVDNUM ~ GLUCOSE, data=fram, family=binomial("logit")) 
+# 
+# summary(logReg)
+# 
+# plotModel(logReg)
+# 
+# set.seed(69420)
+# 
+# Bootstr_2 <- do(10000) * glm(CVD ~ GLUCOSE, data=resample(Data), family=binomial("logit"))
+# 
+# summary(Bootstr_2)
+# 
+# gf_histogram(~ GLUCOSE, data=Bootstr_2)
+# 
+# set.seed(69420)
+# 
+# Nullver_2 <-do(10000) * glm(CVD ~ shuffle(GLUCOSE), data=resample(Data), family=binomial("logit"))
+# 
+# summary(Nullver_2)
+# 
+# gl_histogram(~ GLUCOSE, data=Nullver_2)
+# 
+# 
+# # Anteil von Koeffizeinten aus der Nullverteilung der sich mit der Range der
+# # Koeffizienten aus dem Bootsrapping überschneidet oder größer ist
+# prop(~ abs(GLUCOSE) >= abs(coef(Bootstr_2) [2]), data=Nullver_2) 
+# 
+# mosaicplot(CVD ~ DIABETES, data=Data)
+# 
+# # Wahrscheinlichkeit eine CVD zu erleiden im Verlauf der Studie
+# prop(~ CVD, data=Data) 
 ```
 
+```{r}
+#linReg1000 <- lm(SYSBP ~ BMI + TOTCHOL + AGE + CIGPDAY + GLUCOSE, data=fram)
+#plotModel(linReg1000)
+#broom::tidy(linReg1000) |> filter(term == "(Intercept)") |> select(estimate)
+```
+
+Test:
+`broom::tidy(linReg1000) |> filter(term == "(Intercept)") |> select(estimate)`
