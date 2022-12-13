@@ -3,6 +3,7 @@
 .ipynb_checkpoints/
 _extensions/
 analyse_files/
+plots/
 
 # History files
 .Rhistory
@@ -44,9 +45,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
-
-# pkgdown site
-docs/
 
 # translation temp files
 po/*~

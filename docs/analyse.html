@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Analyse der Framingham Heart Study</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="analyse_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analyse_files/libs/quarto-html/quarto.js"></script>
+<script src="analyse_files/libs/quarto-html/popper.min.js"></script>
+<script src="analyse_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="analyse_files/libs/quarto-html/anchor.min.js"></script>
+<link href="analyse_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="analyse_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="analyse_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="analyse_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="analyse_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analyse der Framingham Heart Study</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="der-datensatz" class="level2">
+<h2 class="anchored" data-anchor-id="der-datensatz">Der Datensatz</h2>
+<p>Wir haben die Daten aus dem R-Paket <a href="https://search.r-project.org/CRAN/refmans/riskCommunicator/html/framingham.html">riskCommunicator</a> exportiert.</p>
+<p>Die originale Erläuterung der Variablen aus dem Ursprungspaket befindet sich im <a href="#variablen-des-framingham-datensatzes">Anhang</a>.</p>
+</section>
+<section id="vorbereitung-der-r-umgebung" class="level2">
+<h2 class="anchored" data-anchor-id="vorbereitung-der-r-umgebung">Vorbereitung der R-Umgebung</h2>
+<p>Wir laden die für unsere Untersuchung erforderlichen Pakete:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggExtra)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mosaic)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(svglite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Wir definieren einige globale Variablen zur Kontrolle des Bootstrapping-Verfahrens:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>const.seed <span class="ot">&lt;-</span> <span class="dv">69420</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>boot.rep <span class="ot">&lt;-</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Zusätzlich definieren wir Helferfunktionen zum Export unserer Plots für die Präsentation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>do_save <span class="ot">&lt;-</span> <span class="cf">function</span>(name, plot, widthFactor, heightFactor, ...) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  fname <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"{name}_{widthFactor}x{heightFactor}.svg"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  width <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="sc">*</span> widthFactor</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  height <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="sc">*</span> heightFactor</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      fname,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot =</span> plot,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">path =</span> <span class="st">"plots"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> width,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">height =</span> height,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">bg =</span> <span class="st">"transparent"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      ...</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>hhr_save <span class="ot">&lt;-</span> <span class="cf">function</span>(name, plot, ...) {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  heightFactor <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (widthFactor <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) {</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">do_save</span>(name, plot, widthFactor, heightFactor)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="daten-laden-und-vorbereiten" class="level2">
+<h2 class="anchored" data-anchor-id="daten-laden-und-vorbereiten">Daten laden und vorbereiten</h2>
+<p>Die Daten liegen in <code>ext.csv</code>. Wir definieren die Spaltentypen explizit (sonst interpretiert R alles als String) und benennen die Level des Attributs SEX um:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>full_data <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ext.csv"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">list</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">RANDID =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SEX =</span> <span class="fu">col_factor</span>(),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOTCHOL =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGE =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SYSBP =</span> <span class="fu">col_number</span>(),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">DIABP =</span> <span class="fu">col_number</span>(),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">CURSMOKE =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">CIGPDAY =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">BMI =</span> <span class="fu">col_number</span>(),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">DIABETES =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPMEDS =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">HEARTRTE =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">GLUCOSE =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">EDUC =</span> <span class="fu">col_factor</span>(<span class="at">ordered =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">PREVCHD =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">PREVAP =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">PREVMI =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">PREVSTRK =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">PREVHYP =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIME =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">PERIOD =</span> <span class="fu">col_factor</span>(<span class="at">ordered =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">HDLC =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">LDLC =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">DEATH =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">ANGINA =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">HOSPMI =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">MI_FCHD =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">ANYCHD =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">STROKE =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">CVD =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">HYPERTEN =</span> <span class="fu">col_logical</span>(),</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMEAP =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMEMI =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMEMIFC =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMECHD =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMESTRK =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMECVD =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMEDTH =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">TIMEHYP =</span> <span class="fu">col_integer</span>()</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">SEX =</span> forcats<span class="sc">::</span><span class="fu">fct_recode</span>(SEX, <span class="st">"MALE"</span> <span class="ot">=</span> <span class="st">"1"</span>, <span class="st">"FEMALE"</span> <span class="ot">=</span> <span class="st">"2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Wir untersuchen, ob das Laden der Daten problemfrei funktioniert hat und werfen einen Blick auf Struktur und Inhalt des Datensatzes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(full_data)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(full_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [11,627 × 39] (S3: tbl_df/tbl/data.frame)
+ $ RANDID  : int [1:11627] 2448 2448 6238 6238 6238 9428 9428 10552 10552 11252 ...
+ $ SEX     : Factor w/ 2 levels "MALE","FEMALE": 1 1 2 2 2 1 1 2 2 2 ...
+ $ TOTCHOL : int [1:11627] 195 209 250 260 237 245 283 225 232 285 ...
+ $ AGE     : int [1:11627] 39 52 46 52 58 48 54 61 67 46 ...
+ $ SYSBP   : num [1:11627] 106 121 121 105 108 ...
+ $ DIABP   : num [1:11627] 70 66 81 69.5 66 80 89 95 109 84 ...
+ $ CURSMOKE: logi [1:11627] FALSE FALSE FALSE FALSE FALSE TRUE ...
+ $ CIGPDAY : int [1:11627] 0 0 0 0 0 20 30 30 20 23 ...
+ $ BMI     : num [1:11627] 27 NA 28.7 29.4 28.5 ...
+ $ DIABETES: logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ BPMEDS  : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ HEARTRTE: int [1:11627] 80 69 95 80 80 75 75 65 60 85 ...
+ $ GLUCOSE : int [1:11627] 77 92 76 86 71 70 87 103 89 85 ...
+ $ EDUC    : Factor w/ 4 levels "4","2","1","3": 1 1 2 2 2 3 3 4 4 4 ...
+ $ PREVCHD : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ PREVAP  : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ PREVMI  : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ PREVSTRK: logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ PREVHYP : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ TIME    : int [1:11627] 0 4628 0 2156 4344 0 2199 0 1977 0 ...
+ $ PERIOD  : Factor w/ 3 levels "1","3","2": 1 2 1 3 2 1 3 1 3 1 ...
+ $ HDLC    : int [1:11627] NA 31 NA NA 54 NA NA NA NA NA ...
+ $ LDLC    : int [1:11627] NA 178 NA NA 141 NA NA NA NA NA ...
+ $ DEATH   : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ ANGINA  : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ HOSPMI  : logi [1:11627] TRUE TRUE FALSE FALSE FALSE FALSE ...
+ $ MI_FCHD : logi [1:11627] TRUE TRUE FALSE FALSE FALSE FALSE ...
+ $ ANYCHD  : logi [1:11627] TRUE TRUE FALSE FALSE FALSE FALSE ...
+ $ STROKE  : logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ CVD     : logi [1:11627] TRUE TRUE FALSE FALSE FALSE FALSE ...
+ $ HYPERTEN: logi [1:11627] FALSE FALSE FALSE FALSE FALSE FALSE ...
+ $ TIMEAP  : int [1:11627] 8766 8766 8766 8766 8766 8766 8766 2956 2956 8766 ...
+ $ TIMEMI  : int [1:11627] 6438 6438 8766 8766 8766 8766 8766 2956 2956 8766 ...
+ $ TIMEMIFC: int [1:11627] 6438 6438 8766 8766 8766 8766 8766 2956 2956 8766 ...
+ $ TIMECHD : int [1:11627] 6438 6438 8766 8766 8766 8766 8766 2956 2956 8766 ...
+ $ TIMESTRK: int [1:11627] 8766 8766 8766 8766 8766 8766 8766 2089 2089 8766 ...
+ $ TIMECVD : int [1:11627] 6438 6438 8766 8766 8766 8766 8766 2089 2089 8766 ...
+ $ TIMEDTH : int [1:11627] 8766 8766 8766 8766 8766 8766 8766 2956 2956 8766 ...
+ $ TIMEHYP : int [1:11627] 8766 8766 8766 8766 8766 8766 8766 0 0 4285 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>full_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11,627 × 39
+   RANDID SEX    TOTCHOL   AGE SYSBP DIABP CURSMOKE CIGPDAY   BMI DIABE…¹ BPMEDS
+    &lt;int&gt; &lt;fct&gt;    &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;      &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt;   &lt;lgl&gt; 
+ 1   2448 MALE       195    39  106   70   FALSE          0  27.0 FALSE   FALSE 
+ 2   2448 MALE       209    52  121   66   FALSE          0  NA   FALSE   FALSE 
+ 3   6238 FEMALE     250    46  121   81   FALSE          0  28.7 FALSE   FALSE 
+ 4   6238 FEMALE     260    52  105   69.5 FALSE          0  29.4 FALSE   FALSE 
+ 5   6238 FEMALE     237    58  108   66   FALSE          0  28.5 FALSE   FALSE 
+ 6   9428 MALE       245    48  128.  80   TRUE          20  25.3 FALSE   FALSE 
+ 7   9428 MALE       283    54  141   89   TRUE          30  25.3 FALSE   FALSE 
+ 8  10552 FEMALE     225    61  150   95   TRUE          30  28.6 FALSE   FALSE 
+ 9  10552 FEMALE     232    67  183  109   TRUE          20  30.2 FALSE   FALSE 
+10  11252 FEMALE     285    46  130   84   TRUE          23  23.1 FALSE   FALSE 
+# … with 11,617 more rows, 28 more variables: HEARTRTE &lt;int&gt;, GLUCOSE &lt;int&gt;,
+#   EDUC &lt;fct&gt;, PREVCHD &lt;lgl&gt;, PREVAP &lt;lgl&gt;, PREVMI &lt;lgl&gt;, PREVSTRK &lt;lgl&gt;,
+#   PREVHYP &lt;lgl&gt;, TIME &lt;int&gt;, PERIOD &lt;fct&gt;, HDLC &lt;int&gt;, LDLC &lt;int&gt;,
+#   DEATH &lt;lgl&gt;, ANGINA &lt;lgl&gt;, HOSPMI &lt;lgl&gt;, MI_FCHD &lt;lgl&gt;, ANYCHD &lt;lgl&gt;,
+#   STROKE &lt;lgl&gt;, CVD &lt;lgl&gt;, HYPERTEN &lt;lgl&gt;, TIMEAP &lt;int&gt;, TIMEMI &lt;int&gt;,
+#   TIMEMIFC &lt;int&gt;, TIMECHD &lt;int&gt;, TIMESTRK &lt;int&gt;, TIMECVD &lt;int&gt;,
+#   TIMEDTH &lt;int&gt;, TIMEHYP &lt;int&gt;, and abbreviated variable name ¹​DIABETES</code></pre>
+</div>
+</div>
+<p>Nachdem die Daten nun in <code>full_data</code> vorliegen, beginnen wir mit der Untersuchung.</p>
+</section>
+<section id="analyse-frage-1-führt-ein-hoher-bmi-zu-erhöhtem-systolischem-blutdruck" class="level2">
+<h2 class="anchored" data-anchor-id="analyse-frage-1-führt-ein-hoher-bmi-zu-erhöhtem-systolischem-blutdruck">Analyse Frage 1: Führt ein hoher BMI zu erhöhtem systolischem Blutdruck?</h2>
+<p><span class="math inline">\(H_{0}\)</span>: Die unabhängige Variable BMI hat keinen Einfluss auf die abhängige Variable SYSBP</p>
+<p><span class="math inline">\(H_{A}\)</span>: Die unabhängige Variable BMI hat einen (positiven oder negativen) Einfluss auf die abhängige Variable SYSBP</p>
+<p>Wir filtern zuerst Beobachtungen mit leeren Werten für unsere Variablen aus <code>full_data</code> heraus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hyp1_data <span class="ot">&lt;-</span> full_data <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(BMI), <span class="sc">!</span><span class="fu">is.na</span>(SYSBP))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="explorative-datenanalyse" class="level3">
+<h3 class="anchored" data-anchor-id="explorative-datenanalyse">Explorative Datenanalyse</h3>
+<p>Lagemaße des BMI:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">favstats</span>(<span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   min     Q1 median    Q3  max     mean      sd     n missing
+ 14.43 23.095  25.48 28.07 56.8 25.87735 4.10264 11575       0</code></pre>
+</div>
+</div>
+<p>Lagemaße des SYSBP:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">favstats</span>(<span class="sc">~</span> SYSBP, <span class="at">data=</span>hyp1_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  min  Q1 median  Q3 max     mean      sd     n missing
+ 83.5 120    132 149 295 136.2967 22.7757 11575       0</code></pre>
+</div>
+</div>
+<p>BMI und systolischer Blutdruck sind numerische Variablen, wir schauen uns also ihre Verteilung an:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>bmi_hgram <span class="ot">&lt;-</span> hyp1_data <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>BMI)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">"#4477aa"</span>, <span class="at">color=</span><span class="st">"#4477aa"</span>, <span class="at">binwidth=</span><span class="dv">1</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># </span><span class="al">TODO</span><span class="co">: 2discuss: Histogramm oder KDE?</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ggtitle("Verteilung des Body Mass Index") +</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_histogram(fill="#4477aa", color="#4477aa", binwidth=1, alpha=0.8) +</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_density(fill="#4477aa", color="#4477aa", alpha=0.8) +</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>sysbp_hgram_colours <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'1'</span><span class="ot">=</span><span class="st">'#228833'</span>, <span class="st">'5'</span><span class="ot">=</span><span class="st">'#ee6677'</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>sysbp_hgram <span class="ot">&lt;-</span> hyp1_data <span class="sc">|&gt;</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>SYSBP)) <span class="sc">+</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">colour=</span><span class="st">'5'</span>, <span class="at">fill=</span><span class="st">'5'</span>), <span class="at">binwidth=</span><span class="dv">5</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">colour=</span><span class="st">'1'</span>, <span class="at">fill=</span><span class="st">'1'</span>), <span class="at">binwidth=</span><span class="dv">1</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values=</span>sysbp_hgram_colours,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">breaks=</span><span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>sysbp_hgram_colours,</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name=</span><span class="st">'binwidth'</span>) <span class="sc">+</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_dist <span class="ot">&lt;-</span> bmi_hgram <span class="sc">/</span> sysbp_hgram</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp1_bmi_sysbp_dist"</span>, bmi_sysbp_dist)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_dist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Auffällig: “Runde” Blutdruckwerte - insbesondere 110, 120 und 130 - sind überrepräsentiert.</p>
+<p>Wir visualisieren den Zusammenhang zwischen BMI und systolischem Blutdruck:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Konturplot (2D-Kerndichteschätzung) mit transparenter Punktwolke in der richtigen Farbe...</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_scatter_contour <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(hyp1_data, <span class="fu">aes</span>(<span class="at">x=</span>BMI, <span class="at">y=</span>SYSBP) ) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.4</span>, <span class="at">colour=</span><span class="st">"#7a0177"</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_2d</span>(<span class="fu">aes</span>(<span class="at">fill =</span> <span class="fu">after_stat</span>(level)), <span class="at">geom =</span> <span class="st">"polygon"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette=</span><span class="st">"RdPu"</span>, <span class="at">direction=</span><span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position=</span><span class="st">'none'</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ...mit Verteilung an den Rändern</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_scatter_contour_marg <span class="ot">&lt;-</span> <span class="fu">ggMarginal</span>(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  bmi_sysbp_scatter_contour,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">type=</span><span class="st">"histogram"</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">xparams=</span><span class="fu">list</span>(<span class="at">colour=</span><span class="st">"#4477aa"</span>, <span class="at">fill=</span><span class="st">"#4477aa"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>, <span class="at">binwidth=</span><span class="dv">1</span>),</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">yparams=</span><span class="fu">list</span>(<span class="at">colour=</span><span class="st">"#ee6677"</span>, <span class="at">fill=</span><span class="st">"#ee6677"</span>, <span class="at">alpha=</span><span class="fl">0.8</span>, <span class="at">binwidth=</span><span class="dv">5</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp1_bmi_sysbp_scatter_contour_marg"</span>, bmi_sysbp_scatter_contour_marg)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_scatter_contour_marg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="lineare-regression" class="level3">
+<h3 class="anchored" data-anchor-id="lineare-regression">Lineare Regression</h3>
+<p>Wir untersuchen den Zusammenhang zwischen BMI und SYSBP mittels einer linearen Regression:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hyp1_linreg <span class="ot">&lt;-</span> <span class="fu">lm</span>(SYSBP <span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_data)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp1_linreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = SYSBP ~ BMI, data = hyp1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-58.571 -15.668  -3.879  12.092 143.333 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 96.79744    1.29995   74.46   &lt;2e-16 ***
+BMI          1.52640    0.04962   30.77   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 21.9 on 11573 degrees of freedom
+Multiple R-squared:  0.0756,    Adjusted R-squared:  0.07552 
+F-statistic: 946.5 on 1 and 11573 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Wir zeichnen die Regressionsgerade in das Streudiagramm ein:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_scatter_regr <span class="ot">&lt;-</span> bmi_sysbp_scatter_contour <span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">color=</span><span class="st">'#228833'</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">slope=</span><span class="fu">coef</span>(hyp1_linreg)[<span class="st">'BMI'</span>],</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">intercept=</span><span class="fu">coef</span>(hyp1_linreg)[<span class="st">'(Intercept)'</span>])</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp1_bmi_sysbp_scatter_regr"</span>, bmi_sysbp_scatter_regr)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>bmi_sysbp_scatter_regr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="bootstrapping" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrapping">Bootstrapping</h3>
+<p>Wir berechnen eine Bootstrapverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(const.seed) <span class="co"># Reproduzierbarkeit</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hyp1_boot <span class="ot">&lt;-</span> <span class="fu">do</span>(boot.rep)<span class="sc">*</span> <span class="fu">lm</span>(SYSBP <span class="sc">~</span> BMI, <span class="at">data=</span><span class="fu">resample</span>(hyp1_data))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp1_boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Intercept           BMI            sigma         r.squared      
+ Min.   : 92.91   Min.   :1.398   Min.   :21.18   Min.   :0.06507  
+ 1st Qu.: 96.11   1st Qu.:1.491   1st Qu.:21.76   1st Qu.:0.07159  
+ Median : 96.93   Median :1.523   Median :21.88   Median :0.07489  
+ Mean   : 96.87   Mean   :1.523   Mean   :21.89   Mean   :0.07531  
+ 3rd Qu.: 97.63   3rd Qu.:1.555   3rd Qu.:22.03   3rd Qu.:0.07924  
+ Max.   :100.04   Max.   :1.677   Max.   :22.32   Max.   :0.08898  
+       F              numdf       dendf            .row       .index      
+ Min.   : 805.4   Min.   :1   Min.   :11573   Min.   :1   Min.   :  1.00  
+ 1st Qu.: 892.4   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 25.75  
+ Median : 936.8   Median :1   Median :11573   Median :1   Median : 50.50  
+ Mean   : 943.0   Mean   :1   Mean   :11573   Mean   :1   Mean   : 50.50  
+ 3rd Qu.: 995.9   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 75.25  
+ Max.   :1130.4   Max.   :1   Max.   :11573   Max.   :1   Max.   :100.00  </code></pre>
+</div>
+</div>
+<p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Bootstrapverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_boot, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    0.5%    99.5% 
+1.406569 1.666349 </code></pre>
+</div>
+</div>
+<p>Wir berechnen eine Nullverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nullverteilung</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(const.seed) <span class="co"># Reproduzierbarkeit</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>hyp1_nulldist <span class="ot">&lt;-</span> <span class="fu">do</span>(boot.rep) <span class="sc">*</span> <span class="fu">lm</span>(SYSBP <span class="sc">~</span> <span class="fu">shuffle</span>(BMI), <span class="at">data=</span><span class="fu">resample</span>(hyp1_data)) </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp1_nulldist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Intercept          BMI                 sigma         r.squared        
+ Min.   :132.5   Min.   :-0.1249937   Min.   :22.30   Min.   :0.000e+00  
+ 1st Qu.:135.4   1st Qu.:-0.0487101   1st Qu.:22.64   1st Qu.:1.024e-05  
+ Median :136.3   Median :-0.0008629   Median :22.78   Median :5.240e-05  
+ Mean   :136.3   Mean   :-0.0013144   Mean   :22.79   Mean   :1.061e-04  
+ 3rd Qu.:137.5   3rd Qu.: 0.0336467   3rd Qu.:22.91   3rd Qu.:1.455e-04  
+ Max.   :139.5   Max.   : 0.1369543   Max.   :23.46   Max.   :6.142e-04  
+       F              numdf       dendf            .row       .index      
+ Min.   :0.0000   Min.   :1   Min.   :11573   Min.   :1   Min.   :  1.00  
+ 1st Qu.:0.1186   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 25.75  
+ Median :0.6064   Median :1   Median :11573   Median :1   Median : 50.50  
+ Mean   :1.2277   Mean   :1   Mean   :11573   Mean   :1   Mean   : 50.50  
+ 3rd Qu.:1.6846   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 75.25  
+ Max.   :7.1129   Max.   :1   Max.   :11573   Max.   :1   Max.   :100.00  </code></pre>
+</div>
+</div>
+<p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Nullverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_nulldist, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      0.5%      99.5% 
+-0.1169046  0.1367032 </code></pre>
+</div>
+</div>
+<p>Anschließend visualisieren wir die Verteilungen:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>hyp1_boot<span class="sc">$</span>Verteilung <span class="ot">&lt;-</span> <span class="st">"Bootstrap"</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>hyp1_nulldist<span class="sc">$</span>Verteilung <span class="ot">&lt;-</span> <span class="st">"Null"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>hyp1_bootstrap_null_hist <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">rbind</span>(hyp1_boot, hyp1_nulldist)) <span class="sc">+</span> </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> BMI, <span class="at">fill =</span> Verteilung) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.01</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp1_bootstrap_null_hist"</span>, hyp1_bootstrap_null_hist)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>hyp1_bootstrap_null_hist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Abschließend berechnen wir den Korrelationskoeffizienten (Pearson’s p) von SYSBP und BMI:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mosaic<span class="sc">::</span><span class="fu">cor</span>(SYSBP <span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_data) <span class="co"># Korrelation aus Datensatz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2749543</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-frage-2-begünstigt-diabetes-schwere-gefäßerkrankungen" class="level2">
+<h2 class="anchored" data-anchor-id="analyse-frage-2-begünstigt-diabetes-schwere-gefäßerkrankungen">Analyse Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?</h2>
+<p><span class="math inline">\(H_{0}\)</span>: Die unabhängige Variable GLUCOSE hat keinen Einfluss auf die abhängige Variable CVD</p>
+<p><span class="math inline">\(H_{A}\)</span>: Die unabhängige Variable GLUCOSE hat einen (positiven oder negativen) Einfluss auf die abhängige Variable CVD</p>
+<p>Wir filtern zuerst Beobachtungen mit leeren Werten für unsere Variablen aus <code>full_data</code> heraus:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hyp2_data <span class="ot">&lt;-</span> full_data <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(GLUCOSE), <span class="sc">!</span><span class="fu">is.na</span>(CVD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="explorative-datenanalyse-1" class="level3">
+<h3 class="anchored" data-anchor-id="explorative-datenanalyse-1">Explorative Datenanalyse</h3>
+<p>Lagemaße von GLUCOSE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">favstats</span>(<span class="sc">~</span> GLUCOSE, <span class="at">data=</span>hyp2_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> min Q1 median Q3 max     mean       sd     n missing
+  39 72     80 89 478 84.12487 24.99378 10187       0</code></pre>
+</div>
+</div>
+<p>Absolute Häufigkeit von CVD:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>hyp2_data <span class="sc">|&gt;</span> <span class="fu">count</span>(CVD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  CVD       n
+  &lt;lgl&gt; &lt;int&gt;
+1 FALSE  7612
+2 TRUE   2575</code></pre>
+</div>
+</div>
+<p>Relative Häufigkeit kardiovaskulärer Erkrankungen im Followup:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop</span>(<span class="sc">~</span> CVD, <span class="at">data =</span> hyp2_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>prop_TRUE 
+0.2527731 </code></pre>
+</div>
+</div>
+<p>Wir stellen die Verteilung der Glukosewerte gruppiert nach dem Auftreten kardiovaskulärer Erkrankungen im Followup dar:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gruppengröße</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>cvd_size <span class="ot">&lt;-</span> hyp2_data <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CVD) <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">num=</span><span class="fu">n</span>())</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>gluc_cvd_dist <span class="ot">&lt;-</span> hyp2_data <span class="sc">|&gt;</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cvd_size, <span class="at">by =</span> <span class="st">"CVD"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CVD =</span> <span class="fu">glue</span>(<span class="st">"{CVD}</span><span class="sc">\n</span><span class="st">(n={num}, {round((num/n()) * 100, digits = 2)}%)"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>CVD, <span class="at">y=</span>GLUCOSE, <span class="at">fill=</span>CVD)) <span class="sc">+</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">color=</span><span class="st">"grey"</span>, <span class="at">fill=</span><span class="st">"grey"</span>) <span class="sc">+</span> </span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">color=</span><span class="st">"#332288"</span>, <span class="at">fill=</span><span class="st">"#332288"</span>, <span class="at">alpha=</span><span class="fl">0.6</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_trans</span>(<span class="at">y=</span><span class="st">"log10"</span>) <span class="sc">+</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">type=</span><span class="st">"qual"</span>) <span class="sc">+</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">legend.position=</span><span class="st">"none"</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp2_gluc_cvd_dist"</span>, gluc_cvd_dist)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>gluc_cvd_dist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Alternative Darstellung als ECDF:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mit ECDF sieht man den kleinen Unterschied etwas besser</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>gluc_cvd_edcf <span class="ot">&lt;-</span> hyp2_data <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>GLUCOSE, <span class="at">color=</span>CVD)) <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ecdf</span>(<span class="at">geom =</span> <span class="st">"step"</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp2_gluc_cvd_edcf"</span>, gluc_cvd_edcf)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>gluc_cvd_edcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="logistische-regression" class="level3">
+<h3 class="anchored" data-anchor-id="logistische-regression">Logistische Regression</h3>
+<p>Wir erklären mittels logistischer Regression die binäre Zielvariable CVD durch die Einflussgröße GLUCOSE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>hyp2_logreg <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> GLUCOSE, <span class="at">family=</span><span class="fu">binomial</span>(<span class="st">"logit"</span>), <span class="at">data=</span>hyp2_data)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp2_logreg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ GLUCOSE, family = binomial("logit"), data = hyp2_data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.0939  -0.7631  -0.7297   0.9886   1.8470  
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.8789567  0.0805065  -23.34   &lt;2e-16 ***
+GLUCOSE      0.0093447  0.0009027   10.35   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 11519  on 10186  degrees of freedom
+Residual deviance: 11402  on 10185  degrees of freedom
+AIC: 11406
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>Wir visualisieren die Regressionskurve:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>log_smooth <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">"#ee7733"</span>, <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"binomial"</span>), ...)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Logistische Regression benötigt hier einen numerischen Wert</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>hyp2_data <span class="ot">&lt;-</span> hyp2_data <span class="sc">|&gt;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">P_CVD =</span> <span class="fu">if_else</span>(CVD <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>gluc_cvdnum_logreg <span class="ot">&lt;-</span> hyp2_data <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>GLUCOSE, <span class="at">y=</span>P_CVD)) <span class="sc">+</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">alpha=</span><span class="fl">0.02</span>, <span class="at">height=</span><span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_bin2d</span>(<span class="at">binwidth =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.04</span>), <span class="fu">aes</span>(<span class="at">colour=</span><span class="fu">after_stat</span>(count))) <span class="sc">+</span> </span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> x) <span class="sc">+</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp2_gluc_cvdnum_logreg"</span>, gluc_cvdnum_logreg)</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>gluc_cvdnum_logreg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="bootstrapping-1" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrapping-1">Bootstrapping</h3>
+<p>Wir berechnen eine Bootstrapverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(const.seed) <span class="co"># Reproduzierbarkeit</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>hyp2_bootlog <span class="ot">&lt;-</span> <span class="fu">do</span>(boot.rep) <span class="sc">*</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> GLUCOSE, <span class="at">family=</span><span class="fu">binomial</span>(<span class="st">"logit"</span>), <span class="at">data=</span><span class="fu">resample</span>(hyp2_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Bootstrapverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> GLUCOSE, <span class="at">data=</span>hyp2_bootlog, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       0.5%       99.5% 
+0.007025338 0.011719434 </code></pre>
+</div>
+</div>
+<p>Wir berechnen eine Nullverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(const.seed) <span class="co"># Reproduzierbarkeit</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>hyp2_nulllog <span class="ot">&lt;-</span> <span class="fu">do</span>(boot.rep) <span class="sc">*</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> <span class="fu">shuffle</span>(GLUCOSE), <span class="at">family=</span><span class="fu">binomial</span>(<span class="st">"logit"</span>), <span class="at">data=</span><span class="fu">resample</span>(hyp2_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Nullverteilung:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> GLUCOSE, <span class="at">data=</span>hyp2_nulllog, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        0.5%        99.5% 
+-0.002101297  0.002130226 </code></pre>
+</div>
+</div>
+<p>Wir ermitteln die Wahrscheinlichkeit, dass der Regressionskoeffizient unserer log. Regression so auftauchen würde, falls <span class="math inline">\(H_{0}\)</span> zuträfe:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop</span>(<span class="sc">~</span> <span class="fu">abs</span>(GLUCOSE) <span class="sc">&gt;=</span> <span class="fu">abs</span>(<span class="fu">coef</span>(hyp2_logreg) [<span class="dv">2</span>]), <span class="at">data=</span>hyp2_nulllog) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>prop_TRUE 
+        0 </code></pre>
+</div>
+</div>
+<p>Visualisierung der Verteilungen:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>hyp2_bootlog<span class="sc">$</span>Verteilung <span class="ot">&lt;-</span> <span class="st">"Bootstrap"</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>hyp2_nulllog<span class="sc">$</span>Verteilung <span class="ot">&lt;-</span> <span class="st">"Null"</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>hyp2_log_bootstrap_null_hist <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">rbind</span>(hyp2_bootlog, hyp2_nulllog)) <span class="sc">+</span> </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> GLUCOSE, <span class="at">fill =</span> Verteilung) <span class="sc">+</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.0004</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.0004</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hhr_save</span>(<span class="st">"hyp2_log_bootstrap_null_hist"</span>, hyp2_log_bootstrap_null_hist)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>hyp2_log_bootstrap_null_hist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="analyse_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="anhang" class="level1">
+<h1>Anhang</h1>
+<section id="variablen-des-framingham-datensatzes" class="level2">
+<h2 class="anchored" data-anchor-id="variablen-des-framingham-datensatzes">Variablen des Framingham-Datensatzes</h2>
+<table class="table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RANDID</td>
+<td>Unique identification number for each participant. Values range from 2448-999312.</td>
+</tr>
+<tr class="even">
+<td>SEX</td>
+<td>Participant sex. 1 = Male (n = 5022), 2 = Female (n = 6605).</td>
+</tr>
+<tr class="odd">
+<td>TOTCHOL</td>
+<td>Serum Total Cholesterol (mg/dL). Values range from 107-696.</td>
+</tr>
+<tr class="even">
+<td>AGE</td>
+<td>Age at exam (years). Values range from 32-81.</td>
+</tr>
+<tr class="odd">
+<td>SYSBP</td>
+<td>Systolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 83.5-295.</td>
+</tr>
+<tr class="even">
+<td>DIABP</td>
+<td>Diastolic Blood Pressure (mean of last two of three measurements) (mmHg). Values range from 30-150.</td>
+</tr>
+<tr class="odd">
+<td>CURSMOKE</td>
+<td>Current cigarette smoking at exam. 0 = Not current smoker (n = 6598), 1 = Current smoker (n = 5029).</td>
+</tr>
+<tr class="even">
+<td>CIGPDAY</td>
+<td>Number of cigarettes smoked each day. 0 = Not current smoker. Values range from 0-90 cigarettes per day.</td>
+</tr>
+<tr class="odd">
+<td>BMI</td>
+<td>Body Mass Index, weight in kilograms/height meters squared. Values range from 14.43-56.8.</td>
+</tr>
+<tr class="even">
+<td>DIABETES</td>
+<td>Diabetic according to criteria of first exam treated or first exam with casual glucose of 200 mg/dL or more. 0 = Not a diabetic (n = 11097), 1 = Diabetic (n = 530)</td>
+</tr>
+<tr class="odd">
+<td>BPMEDS</td>
+<td>Use of Anti-hypertensive medication at exam. 0 = Not currently used (n = 10090), 1 = Current use (n = 944).</td>
+</tr>
+<tr class="even">
+<td>HEARTRTE</td>
+<td>Heart rate (Ventricular rate) in beats/min. Values range from 37-220.</td>
+</tr>
+<tr class="odd">
+<td>GLUCOSE</td>
+<td>Casual serum glucose (mg/dL). Values range from 39-478.</td>
+</tr>
+<tr class="even">
+<td>EDUC</td>
+<td>Some high school (1), high school/GED (2), some college/vocational school (3), college (4).</td>
+</tr>
+<tr class="odd">
+<td>PREVCHD</td>
+<td>Prevalent Coronary Heart Disease defined as pre-existing Angina Pectoris, Myocardial Infarction (hospitalized, silent or unrecognized), or Coronary Insufficiency (unstable angina). 0 = Free of disease (n = 10785), 1 = Prevalent disease (n = 842).</td>
+</tr>
+<tr class="even">
+<td>PREVAP</td>
+<td>Prevalent Angina Pectoris at exam. 0 = Free of disease (n = 11000), 1 = Prevalent disease (n = 627).</td>
+</tr>
+<tr class="odd">
+<td>PREVMI</td>
+<td>Prevalent Myocardial Infarction. 0 = Free of disease (n = 11253), 1 = Prevalent disease (n = 374).</td>
+</tr>
+<tr class="even">
+<td>PREVSTRK</td>
+<td>Prevalent Stroke. 0 = Free of disease (n = 11475), 1 = Prevalent disease (n = 152).</td>
+</tr>
+<tr class="odd">
+<td>PREVHYP</td>
+<td>Prevalent Hypertensive. Subject was defined as hypertensive if treated or if second exam at which mean systolic was &gt;=140 mmHg or mean Diastolic &gt;=90 mmHg. 0 = Free of disease (n = 6283), 1 = Prevalent disease (n = 5344).</td>
+</tr>
+<tr class="even">
+<td>TIME</td>
+<td>Number of days since baseline exam. Values range from 0-4854</td>
+</tr>
+<tr class="odd">
+<td>PERIOD</td>
+<td>Examination Cycle. 1 = Period 1 (n = 4434), 2 = Period 2 (n = 3930), 3 = Period 3 (n = 3263)</td>
+</tr>
+<tr class="even">
+<td>HDLC</td>
+<td>High Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 10-189.</td>
+</tr>
+<tr class="odd">
+<td>LDLC</td>
+<td>Low Density Lipoprotein Cholesterol (mg/dL). Available for Period 3 only. Values range from 20-565.</td>
+</tr>
+<tr class="even">
+<td>DEATH</td>
+<td>Death from any cause. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="odd">
+<td>ANGINA</td>
+<td>Angina Pectoris. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="even">
+<td>HOSPMI</td>
+<td>Hospitalized Myocardial Infarction. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="odd">
+<td>MI_FCHD</td>
+<td>Hospitalized Myocardial Infarction or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="even">
+<td>ANYCHD</td>
+<td>Angina Pectoris, Myocardial infarction (Hospitalized and silent or unrecognized), Coronary Insufficiency (Unstable Angina), or Fatal Coronary Heart Disease. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="odd">
+<td>STROKE</td>
+<td>Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="even">
+<td>CVD</td>
+<td>Myocardial infarction (Hospitalized and silent or unrecognized), Fatal Coronary Heart Disease, Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="odd">
+<td>HYPERTEN</td>
+<td>Hypertensive. Defined as the first exam treated for high blood pressure or second exam in which either Systolic is 6 140 mmHg or Diastolic 6 90mmHg. 0 = Did not occur during followup, 1 = Did occur during followup.</td>
+</tr>
+<tr class="even">
+<td>TIMEAP</td>
+<td>Number of days from Baseline exam to first Angina during the followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="odd">
+<td>TIMEMI</td>
+<td>Number of days from Baseline exam to first HOSPMI event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="even">
+<td>TIMEMIFC</td>
+<td>Number of days from Baseline exam to first MI_FCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="odd">
+<td>TIMECHD</td>
+<td>Number of days from Baseline exam to first ANYCHD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="even">
+<td>TIMESTRK</td>
+<td>Number of days from Baseline exam to first STROKE event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="odd">
+<td>TIMECVD</td>
+<td>Number of days from Baseline exam to first CVD event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="even">
+<td>TIMEDTH</td>
+<td>Number of days from Baseline exam to death if occurring during followup or Number of days from Baseline to censor date. Censor date may be end of followup, or last known contact date if subject is lost to followup.</td>
+</tr>
+<tr class="odd">
+<td>TIMEHYP</td>
+<td>Number of days from Baseline exam to first HYPERTEN event during followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
