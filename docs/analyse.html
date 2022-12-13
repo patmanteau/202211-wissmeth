@@ -143,7 +143,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Wir definieren einige globale Variablen zur Kontrolle des Bootstrapping-Verfahrens:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>const.seed <span class="ot">&lt;-</span> <span class="dv">69420</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>boot.rep <span class="ot">&lt;-</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>boot.rep <span class="ot">&lt;-</span> <span class="dv">10000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Zusätzlich definieren wir Helferfunktionen zum Export unserer Plots für die Präsentation:</p>
 <div class="cell">
@@ -426,19 +426,19 @@ F-statistic: 946.5 on 1 and 11573 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp1_boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Intercept           BMI            sigma         r.squared      
- Min.   : 92.91   Min.   :1.398   Min.   :21.18   Min.   :0.06507  
- 1st Qu.: 96.11   1st Qu.:1.491   1st Qu.:21.76   1st Qu.:0.07159  
- Median : 96.93   Median :1.523   Median :21.88   Median :0.07489  
- Mean   : 96.87   Mean   :1.523   Mean   :21.89   Mean   :0.07531  
- 3rd Qu.: 97.63   3rd Qu.:1.555   3rd Qu.:22.03   3rd Qu.:0.07924  
- Max.   :100.04   Max.   :1.677   Max.   :22.32   Max.   :0.08898  
-       F              numdf       dendf            .row       .index      
- Min.   : 805.4   Min.   :1   Min.   :11573   Min.   :1   Min.   :  1.00  
- 1st Qu.: 892.4   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 25.75  
- Median : 936.8   Median :1   Median :11573   Median :1   Median : 50.50  
- Mean   : 943.0   Mean   :1   Mean   :11573   Mean   :1   Mean   : 50.50  
- 3rd Qu.: 995.9   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 75.25  
- Max.   :1130.4   Max.   :1   Max.   :11573   Max.   :1   Max.   :100.00  </code></pre>
+ Min.   : 92.14   Min.   :1.337   Min.   :21.15   Min.   :0.05722  
+ 1st Qu.: 95.92   1st Qu.:1.490   1st Qu.:21.76   1st Qu.:0.07194  
+ Median : 96.82   Median :1.525   Median :21.89   Median :0.07550  
+ Mean   : 96.83   Mean   :1.525   Mean   :21.89   Mean   :0.07560  
+ 3rd Qu.: 97.74   3rd Qu.:1.560   3rd Qu.:22.02   3rd Qu.:0.07921  
+ Max.   :101.81   Max.   :1.704   Max.   :22.61   Max.   :0.09424  
+       F              numdf       dendf            .row       .index     
+ Min.   : 702.5   Min.   :1   Min.   :11573   Min.   :1   Min.   :    1  
+ 1st Qu.: 897.0   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 2501  
+ Median : 945.1   Median :1   Median :11573   Median :1   Median : 5000  
+ Mean   : 946.9   Mean   :1   Mean   :11573   Mean   :1   Mean   : 5000  
+ 3rd Qu.: 995.5   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 7500  
+ Max.   :1204.2   Max.   :1   Max.   :11573   Max.   :1   Max.   :10000  </code></pre>
 </div>
 </div>
 <p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Bootstrapverteilung:</p>
@@ -446,7 +446,7 @@ F-statistic: 946.5 on 1 and 11573 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_boot, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    0.5%    99.5% 
-1.406569 1.666349 </code></pre>
+1.390776 1.660415 </code></pre>
 </div>
 </div>
 <p>Wir berechnen eine Nullverteilung:</p>
@@ -457,19 +457,19 @@ F-statistic: 946.5 on 1 and 11573 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hyp1_nulldist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Intercept          BMI                 sigma         r.squared        
- Min.   :132.5   Min.   :-0.1249937   Min.   :22.30   Min.   :0.000e+00  
- 1st Qu.:135.4   1st Qu.:-0.0487101   1st Qu.:22.64   1st Qu.:1.024e-05  
- Median :136.3   Median :-0.0008629   Median :22.78   Median :5.240e-05  
- Mean   :136.3   Mean   :-0.0013144   Mean   :22.79   Mean   :1.061e-04  
- 3rd Qu.:137.5   3rd Qu.: 0.0336467   3rd Qu.:22.91   3rd Qu.:1.455e-04  
- Max.   :139.5   Max.   : 0.1369543   Max.   :23.46   Max.   :6.142e-04  
-       F              numdf       dendf            .row       .index      
- Min.   :0.0000   Min.   :1   Min.   :11573   Min.   :1   Min.   :  1.00  
- 1st Qu.:0.1186   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 25.75  
- Median :0.6064   Median :1   Median :11573   Median :1   Median : 50.50  
- Mean   :1.2277   Mean   :1   Mean   :11573   Mean   :1   Mean   : 50.50  
- 3rd Qu.:1.6846   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 75.25  
- Max.   :7.1129   Max.   :1   Max.   :11573   Max.   :1   Max.   :100.00  </code></pre>
+ Min.   :131.1   Min.   :-1.874e-01   Min.   :22.05   Min.   :0.000e+00  
+ 1st Qu.:135.4   1st Qu.:-3.544e-02   1st Qu.:22.64   1st Qu.:8.741e-06  
+ Median :136.3   Median :-5.610e-04   Median :22.77   Median :3.945e-05  
+ Mean   :136.3   Mean   :-4.595e-05   Mean   :22.77   Mean   :8.677e-05  
+ 3rd Qu.:137.2   3rd Qu.: 3.439e-02   3rd Qu.:22.91   3rd Qu.:1.140e-04  
+ Max.   :141.2   Max.   : 1.996e-01   Max.   :23.59   Max.   :1.307e-03  
+       F               numdf       dendf            .row       .index     
+ Min.   : 0.0000   Min.   :1   Min.   :11573   Min.   :1   Min.   :    1  
+ 1st Qu.: 0.1012   1st Qu.:1   1st Qu.:11573   1st Qu.:1   1st Qu.: 2501  
+ Median : 0.4566   Median :1   Median :11573   Median :1   Median : 5000  
+ Mean   : 1.0044   Mean   :1   Mean   :11573   Mean   :1   Mean   : 5000  
+ 3rd Qu.: 1.3199   3rd Qu.:1   3rd Qu.:11573   3rd Qu.:1   3rd Qu.: 7500  
+ Max.   :15.1495   Max.   :1   Max.   :11573   Max.   :1   Max.   :10000  </code></pre>
 </div>
 </div>
 <p>Wir ermitteln das Konfidenzintervall (<span class="math inline">\(\alpha = 1\%\)</span>) der Nullverteilung:</p>
@@ -477,7 +477,7 @@ F-statistic: 946.5 on 1 and 11573 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> BMI, <span class="at">data=</span>hyp1_nulldist, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      0.5%      99.5% 
--0.1169046  0.1367032 </code></pre>
+-0.1316818  0.1357474 </code></pre>
 </div>
 </div>
 <p>Anschließend visualisieren wir die Verteilungen:</p>
@@ -653,7 +653,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> GLUCOSE, <span class="at">data=</span>hyp2_bootlog, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       0.5%       99.5% 
-0.007025338 0.011719434 </code></pre>
+0.006886176 0.012175292 </code></pre>
 </div>
 </div>
 <p>Wir berechnen eine Nullverteilung:</p>
@@ -666,7 +666,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qdata</span>(<span class="sc">~</span> GLUCOSE, <span class="at">data=</span>hyp2_nulllog, <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.995</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        0.5%        99.5% 
--0.002101297  0.002130226 </code></pre>
+-0.002564588  0.002302000 </code></pre>
 </div>
 </div>
 <p>Wir ermitteln die Wahrscheinlichkeit, dass der Regressionskoeffizient unserer log. Regression so auftauchen würde, falls <span class="math inline">\(H_{0}\)</span> zuträfe:</p>
