@@ -32,7 +32,7 @@ Wir definieren einige globale Variablen zur Kontrolle des Bootstrapping-Verfahre
 
 ```{r}
 const.seed <- 69420
-boot.rep <- 100
+boot.rep <- 10000
 ```
 
 Zusätzlich definieren wir Helferfunktionen zum
