@@ -1,5 +1,8 @@
 /.quarto/
 /_output/
+.ipynb_checkpoints/
+_extensions/
+analyse_files/
 
 # History files
 .Rhistory
@@ -50,3 +53,5 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+/.luarc.json
