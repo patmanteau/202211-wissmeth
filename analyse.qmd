@@ -1,5 +1,8 @@
 ---
 title: "Analyse der Framingham Heart Study"
+format:
+  html:
+    theme: darkly
 editor: 
   markdown: 
     wrap: 72
@@ -39,8 +42,8 @@ Zusätzlich definieren wir Helferfunktionen zum
 Export unserer Plots für die Präsentation:
 
 ```{r}
-do_save <- function(name, plot, widthFactor, heightFactor, ...) {
-  fname <- glue("{name}_{widthFactor}x{heightFactor}.svg")
+do_save <- function(name, plot, widthFactor, heightFactor, format, ...) {
+  fname <- glue("{name}_{widthFactor}x{heightFactor}.{format}")
   width <- 7 * widthFactor
   height <- 7 * heightFactor
     ggsave(
@@ -54,10 +57,10 @@ do_save <- function(name, plot, widthFactor, heightFactor, ...) {
     )
 }
 
-hhr_save <- function(name, plot, ...) {
+hhr_save <- function(name, plot, format = "svg", ...) {
   heightFactor = 1
   for (widthFactor in c(1, 2)) {
-    do_save(name, plot, widthFactor, heightFactor)
+    do_save(name, plot, widthFactor, heightFactor, format)
   }
 }
 ```
@@ -134,12 +137,10 @@ $H_{0}$: Die unabhängige Variable BMI hat keinen Einfluss auf die abhängige Va
 
 $H_{A}$: Die unabhängige Variable BMI hat einen (positiven oder negativen) Einfluss auf die abhängige Variable SYSBP
 
-Wir filtern zuerst Beobachtungen mit leeren Werten für unsere Variablen
-aus `full_data` heraus:
+Wir kopieren `full_data` für die weitere Analyse:
 
 ```{r}
-hyp1_data <- full_data |>
-  filter(!is.na(BMI), !is.na(SYSBP))
+hyp1_data <- full_data
 ```
 
 ### Explorative Datenanalyse
@@ -252,7 +253,8 @@ summary(hyp1_boot)
 Wir ermitteln das Konfidenzintervall ($\alpha = 1\%$) der Bootstrapverteilung:
 
 ```{r}
-qdata(~ BMI, data=hyp1_boot, p=c(0.005, 0.995))  
+hyp1_bootconf <- qdata(~ BMI, data=hyp1_boot, p=c(0.005, 0.995))
+hyp1_bootconf
 ```
 
 Wir berechnen eine Nullverteilung:
@@ -267,7 +269,8 @@ summary(hyp1_nulldist)
 Wir ermitteln das Konfidenzintervall ($\alpha = 1\%$) der Nullverteilung:
 
 ```{r}
-qdata(~ BMI, data=hyp1_nulldist, p=c(0.005, 0.995))  
+hyp1_nullconf <- qdata(~ BMI, data=hyp1_nulldist, p=c(0.005, 0.995))
+hyp1_nullconf
 ```
 
 Anschließend visualisieren wir die Verteilungen:
@@ -275,21 +278,44 @@ Anschließend visualisieren wir die Verteilungen:
 ```{r}
 hyp1_boot$Verteilung <- "Bootstrap"
 hyp1_nulldist$Verteilung <- "Null"
+
+hyp1_nullconf_lower <- round(as.numeric(hyp1_nullconf[1]), digits = 2)
+hyp1_nullconf_upper <- round(as.numeric(hyp1_nullconf[2]), digits = 2)
+hyp1_nullconf_mean <- round(mean(hyp1_nulldist$BMI), digits = 2)
+
+hyp1_bootconf_lower <- round(as.numeric(hyp1_bootconf[1]), digits = 2)
+hyp1_bootconf_upper <- round(as.numeric(hyp1_bootconf[2]), digits = 2)
+hyp1_bootconf_mean <- round(mean(hyp1_boot$BMI), digits = 2)
+
 hyp1_bootstrap_null_hist <- ggplot(rbind(hyp1_boot, hyp1_nulldist)) + 
   aes(x = BMI, fill = Verteilung) +
-  geom_histogram(binwidth = 0.01, alpha = 0.8) + 
-  geom_histogram(binwidth = 0.01, alpha = 0.8) +
+  geom_histogram(binwidth = 0.01) +
+  geom_linerange(
+    aes(y = 0, xmin = hyp1_nullconf_lower, xmax = hyp1_nullconf_upper), 
+    size = 1.5, 
+    color = "orange") + 
+  geom_linerange(
+    aes(y = 0, xmin = hyp1_bootconf_lower, xmax = hyp1_bootconf_upper),
+    size = 1.5,
+    color = "orange") + 
+  xlab("BMI\n(99% - Konfidenzintervalle)") +
+  ylab("count") +
+  scale_x_continuous(
+    breaks = c(
+      hyp1_nullconf_lower, hyp1_nullconf_mean, hyp1_nullconf_upper,
+      hyp1_bootconf_lower, hyp1_bootconf_mean, hyp1_bootconf_upper),
+    minor_breaks = NULL) +
+  scale_fill_brewer(type="qual") +
   theme_minimal()
 
-
-hhr_save("hyp1_bootstrap_null_hist", hyp1_bootstrap_null_hist)
+hhr_save("hyp1_bootstrap_null_hist", hyp1_bootstrap_null_hist, "png")
 hyp1_bootstrap_null_hist
 ```
 
-Abschließend berechnen wir den Korrelationskoeffizienten (Pearson's p) von SYSBP und BMI:
+Korrelationskoeffizient (Pearson's p) von SYSBP und BMI:
 
 ```{r}
-mosaic::cor(SYSBP ~ BMI, data=hyp1_data) # Korrelation aus Datensatz
+cor(SYSBP ~ BMI, data = hyp1_data, use = "complete.obs")
 ```
 
 ## Analyse Frage 2: Begünstigt Diabetes schwere Gefäßerkrankungen?
@@ -298,12 +324,10 @@ $H_{0}$: Die unabhängige Variable GLUCOSE hat keinen Einfluss auf die abhängig
 
 $H_{A}$: Die unabhängige Variable GLUCOSE hat einen (positiven oder negativen) Einfluss auf die abhängige Variable CVD
 
-Wir filtern zuerst Beobachtungen mit leeren Werten für unsere Variablen
-aus `full_data` heraus:
+Wir kopieren `full_data` für die weitere Analyse:
 
 ```{r}
-hyp2_data <- full_data |>
-  filter(!is.na(GLUCOSE), !is.na(CVD))
+hyp2_data <- full_data
 ```
 
 ### Explorative Datenanalyse
@@ -311,7 +335,7 @@ hyp2_data <- full_data |>
 Lagemaße von GLUCOSE:
 
 ```{r}
-favstats(~ GLUCOSE, data=hyp2_data)
+favstats(GLUCOSE ~ CVD, data=hyp2_data)
 ```
 
 Absolute Häufigkeit von CVD:
@@ -337,12 +361,12 @@ cvd_size <- hyp2_data |>
 
 gluc_cvd_dist <- hyp2_data |>
   left_join(cvd_size, by = "CVD") |>
-  mutate(CVD = glue("{CVD}\n(n={num}, {round((num/n()) * 100, digits = 2)}%)")) |>
+  mutate(CVD = glue("{CVD}\n(n = {num}, {round((num/n()) * 100, digits = 2)}%)")) |>
   ggplot(aes(x=CVD, y=GLUCOSE, fill=CVD)) +
     geom_jitter(alpha = 0.2, color="grey", fill="grey") + 
     geom_boxplot(color="#332288", fill="#332288", alpha=0.6, outlier.shape = NA) +
-    coord_trans(y="log10") +
     scale_fill_brewer(type="qual") +
+    scale_y_log10() +
     theme_minimal() +
     theme(
       legend.position="none"
@@ -350,6 +374,27 @@ gluc_cvd_dist <- hyp2_data |>
 
 hhr_save("hyp2_gluc_cvd_dist", gluc_cvd_dist)
 gluc_cvd_dist
+
+hyp2_gluc_dist_medians <- hyp2_data |> group_by(CVD) |> summarise(median = median(GLUCOSE, na.rm = TRUE))
+
+gluc_cvd_dist_zoomed <- hyp2_data |>
+  left_join(cvd_size, by = "CVD") |>
+  mutate(CVD = glue("{CVD}\n(n = {num}, {round((num/n()) * 100, digits = 2)}%)")) |>
+  ggplot(aes(x=CVD, y=GLUCOSE, fill=CVD)) +
+    geom_jitter(alpha = 0.2, color="grey", fill="grey") + 
+    geom_boxplot(color="#332288", fill="#332288", alpha=0.6, outlier.shape = NA) +
+    scale_fill_brewer(type="qual") +
+    scale_y_log10(
+      breaks = hyp2_gluc_dist_medians$median,
+      minor_breaks = NULL) +
+    coord_cartesian(ylim = c(70, 130)) +
+    theme_minimal() +
+    theme(
+      legend.position="none"
+    )
+
+hhr_save("hyp2_gluc_cvd_dist_zoomed", gluc_cvd_dist_zoomed)
+gluc_cvd_dist_zoomed
 ```
 
 Alternative Darstellung als ECDF:
@@ -376,6 +421,7 @@ summary(hyp2_logreg)
 Wir visualisieren die Regressionskurve:
 
 ```{r}
+#| warning: false
 log_smooth <- function(...) {
   geom_smooth(method = "glm", se = FALSE, color="#ee7733", method.args = list(family = "binomial"), ...)
 }
@@ -386,8 +432,10 @@ hyp2_data <- hyp2_data |>
 
 gluc_cvdnum_logreg <- hyp2_data |> ggplot(aes(x=GLUCOSE, y=P_CVD)) +
   geom_jitter(alpha=0.02, height=0.3) +
-  stat_bin2d(binwidth = c(1, 0.04), aes(colour=after_stat(count))) + 
+  geom_bin_2d(binwidth = c(1, 0.1), aes(colour=after_stat(count))) + 
   log_smooth(formula = y ~ x) +
+  annotate("label", label = "CVD = TRUE", x = 200, y = 1) +
+  annotate("label", label = "CVD = FALSE", x = 200, y = 0) +
   theme_minimal() +
   theme(
     legend.position = "none"
@@ -409,7 +457,7 @@ hyp2_bootlog <- do(boot.rep) * glm(CVD ~ GLUCOSE, family=binomial("logit"), data
 Wir ermitteln das Konfidenzintervall ($\alpha = 1\%$) der Bootstrapverteilung:
 
 ```{r}
-qdata(~ GLUCOSE, data=hyp2_bootlog, p=c(0.005, 0.995))  
+hyp2_bootconf <- qdata(~ GLUCOSE, data=hyp2_bootlog, p=c(0.005, 0.995))  
 ```
 
 Wir berechnen eine Nullverteilung:
@@ -422,10 +470,10 @@ hyp2_nulllog <- do(boot.rep) * glm(CVD ~ shuffle(GLUCOSE), family=binomial("logi
 Wir ermitteln das Konfidenzintervall ($\alpha = 1\%$) der Nullverteilung:
 
 ```{r}
-qdata(~ GLUCOSE, data=hyp2_nulllog, p=c(0.005, 0.995))  
+hyp2_nullconf <- qdata(~ GLUCOSE, data=hyp2_nulllog, p=c(0.005, 0.995))  
 ```
 
-Wir ermitteln die Wahrscheinlichkeit, dass der Regressionskoeffizient unserer log.
+Wahrscheinlichkeit, dass der Regressionskoeffizient unserer log.
 Regression so auftauchen würde, falls $H_{0}$ zuträfe:
 
 ```{r}
@@ -437,13 +485,37 @@ Visualisierung der Verteilungen:
 ```{r}
 hyp2_bootlog$Verteilung <- "Bootstrap"
 hyp2_nulllog$Verteilung <- "Null"
+
+hyp2_nullconf_lower <- round(as.numeric(hyp2_nullconf[1]), digits = 4)
+hyp2_nullconf_upper <- round(as.numeric(hyp2_nullconf[2]), digits = 4)
+hyp2_nullconf_mean <- round(mean(hyp2_nulllog$GLUCOSE), digits = 4)
+
+hyp2_bootconf_lower <- round(as.numeric(hyp2_bootconf[1]), digits = 4)
+hyp2_bootconf_upper <- round(as.numeric(hyp2_bootconf[2]), digits = 4)
+hyp2_bootconf_mean <- round(mean(hyp2_bootlog$GLUCOSE), digits = 4)
+
 hyp2_log_bootstrap_null_hist <- ggplot(rbind(hyp2_bootlog, hyp2_nulllog)) + 
   aes(x = GLUCOSE, fill = Verteilung) +
-  geom_histogram(binwidth = 0.0004, alpha = 0.8) + 
-  geom_histogram(binwidth = 0.0004, alpha = 0.8) +
+  geom_histogram(binwidth = 0.0002) +
+  geom_linerange(
+    aes(y = 0, xmin = hyp2_nullconf_lower, xmax = hyp2_nullconf_upper), 
+    size = 1.5, 
+    color = "orange") + 
+  geom_linerange(
+    aes(y = 0, xmin = hyp2_bootconf_lower, xmax = hyp2_bootconf_upper),
+    size = 1.5,
+    color = "orange") + 
+  xlab("BMI\n(99% - Konfidenzintervalle)") +
+  ylab("count") +
+  scale_x_continuous(
+    breaks = c(
+      hyp2_nullconf_lower, hyp2_nullconf_mean, hyp2_nullconf_upper,
+      hyp2_bootconf_lower, hyp2_bootconf_mean, hyp2_bootconf_upper),
+    minor_breaks = NULL) +
+  scale_fill_brewer(type="qual") +
   theme_minimal()
 
-hhr_save("hyp2_log_bootstrap_null_hist", hyp2_log_bootstrap_null_hist)
+hhr_save("hyp2_log_bootstrap_null_hist", hyp2_log_bootstrap_null_hist, "png")
 hyp2_log_bootstrap_null_hist
 ```
 
